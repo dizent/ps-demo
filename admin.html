@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>网站内容管理系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0F3460',
+                        secondary: '#1A3A5F',
+                        accent: '#E94560',
+                        dark: '#16213E',
+                        light: '#F5F5F5',
+                        'gray-dark': '#333333',
+                        'gray-medium': '#666666',
+                        'gray-light': '#EEEEEE'
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .shadow-custom {
+                box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            }
+        }
+    </style>
+</head>
+<body class="font-inter bg-light text-gray-dark">
+    <!-- 顶部导航 -->
+    <header class="bg-primary text-white py-4 sticky top-0 z-50">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold">网站内容管理系统</h1>
+            <div class="flex items-center space-x-4">
+                <a href="index.html" target="_blank" class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg transition-colors">
+                    <i class="fa fa-eye mr-2"></i>预览网站
+                </a>
+                <button id="saveBtn" class="bg-accent hover:bg-accent/90 px-4 py-2 rounded-lg transition-colors">
+                    <i class="fa fa-save mr-2"></i>保存更改
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="container mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <!-- 侧边导航 -->
+            <nav class="lg:col-span-1 bg-white p-6 rounded-xl shadow-custom">
+                <ul class="space-y-2">
+                    <li><a href="#basic-info" class="block py-2 px-4 hover:bg-gray-light rounded-lg transition-colors active:bg-primary active:text-white"><i class="fa fa-info-circle mr-2"></i>基本信息</a></li>
+                    <li><a href="#navigation" class="block py-2 px-4 hover:bg-gray-light rounded-lg transition-colors"><i class="fa fa-navicon mr-2"></i>导航菜单</a></li>
+                    <li><a href="#hero-section" class="block py-2 px-4 hover:bg-gray-light rounded-lg transition-colors"><i class="fa fa-home mr-2"></i>首页横幅</a></li>
+                    <li><a href="#products" class="block py-2 px-4 hover:bg-gray-light rounded-lg transition-colors"><i class="fa fa-cubes mr-2"></i>产品管理</a></li>
+                    <li><a href="#news" class="block py-2 px-4 hover:bg-gray-light rounded-lg transition-colors"><i class="fa fa-newspaper-o mr-2"></i>新闻管理</a></li>
+                    <li><a href="#company-info" class="block py-2 px-4 hover:bg-gray-light rounded-lg transition-colors"><i class="fa fa-building mr-2"></i>公司信息</a></li>
+                    <li><a href="#contact" class="block py-2 px-4 hover:bg-gray-light rounded-lg transition-colors"><i class="fa fa-envelope mr-2"></i>联系信息</a></li>
+                    <li><a href="#social-media" class="block py-2 px-4 hover:bg-gray-light rounded-lg transition-colors"><i class="fa fa-weixin mr-2"></i>社交媒体</a></li>
+                    <li><a href="#theme-settings" class="block py-2 px-4 hover:bg-gray-light rounded-lg transition-colors"><i class="fa fa-paint-brush mr-2"></i>主题设置</a></li>
+                </ul>
+            </nav>
+
+            <!-- 表单区域 -->
+            <div class="lg:col-span-3 space-y-8">
+                <!-- 基本信息 -->
+                <section id="basic-info" class="bg-white p-6 rounded-xl shadow-custom">
+                    <h2 class="text-2xl font-bold text-primary mb-6 flex items-center"><i class="fa fa-info-circle mr-2"></i>基本信息</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-gray-dark font-medium mb-2">网站标题</label>
+                            <input type="text" id="siteTitle" class="w-full px-4 py-2 border border-gray-light rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50" value="PinSai导热硅脂 - 专业导热解决方案提供商">
+                        </div>
+                        <div>
+                            <label class="block text-gray-dark font-medium mb-2">公司名称</label>
+                            <input type="text" id="companyName" class="w-full px-4 py-2 border border-gray-light rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50" value="PinSai">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-gray-dark font-medium mb-2">公司简介</label>
+                            <textarea id="companyDescription" class="w-full px-4 py-2 border border-gray-light rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 min-h-[100px]">15年专注导热材料研发与生产，国家高新技术企业，为全球客户提供高品质的导热解决方案。</textarea>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 产品管理 -->
+                <section id="products" class="bg-white p-6 rounded-xl shadow-custom">
+                    <h2 class="text-2xl font-bold text-primary mb-6 flex items-center"><i class="fa fa-cubes mr-2"></i>产品管理</h2>
+                    
+                    <!-- 产品1 -->
+                    <div class="border-b border-gray-light pb-6 mb-6">
+                        <h3 class="text-xl font-semibold mb-4">产品1</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-gray-dark font-medium mb-2">产品名称</label>
+                                <input type="text" id="product1Name" class="w-full px-4 py-2 border border-gray-light rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50" value="HC-900 高导热硅脂">
+                            </div>
+                            <div>
+                                <label class="block text-gray-dark font-medium mb-2">导热系数</label>
+                                <input type="text" id="product1Thermal" class="w-full px-4 py-2 border border-gray-light rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50" value="8.5 W/m·K">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-gray-dark font-medium mb-2">产品描述</label>
+                                <textarea id="product1Desc" class="w-full px-4 py-2 border border-gray-light rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 min-h-[80px]">超高导热系数，适用于CPU、GPU等高性能电子元件的散热需求，长期使用稳定性好。</textarea>
+                            </div>
+                            <div>
+                                <label class="block text-gray-dark font-medium mb-2">产品图片URL</label>
+                                <input type="text" id="product1Image" class="w-full px-4 py-2 border border-gray-light rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50" value="https://picsum.photos/id/1/500/300">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 产品2 -->
+                    <div class="border-b border-gray-light pb-6 mb-6">
+                        <h3 class="text-xl font-semibold mb-4">产品2</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-gray-dark font-medium mb-2">产品名称</label>
+                                <input type="text" id="product2Name" class="w-full px-4 py-2 border border-gray-light rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50" value="HC-700 通用导热硅脂">
+                            </div>
+                            <div>
+                                <label class="block text-gray-dark font-medium mb-2">导热系数</label>
+                                <input type="text" id="product2Thermal" class="w-full px-4 py-2 border border-gray-light rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50" value="6.8 W/m·K">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-gray-dark font-medium mb-2">产品描述</label>
+                                <textarea id="product2Desc" class="w-full px-4 py-2 border border-gray-light rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 min-h-[80px]">高性价比的通用型导热硅脂，适用于大多数电子设备的散热需求，施工性能优良。</textarea>
+                            </div>
+                            <div>
+                                <label class="block text-gray-dark font-medium mb-2">产品图片URL</label>
+                                <input type="text" id="product2Image" class="w-full px-4 py-2 border border-gray-light rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50" value="https://picsum.photos/id/2/500/300">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="add-product-btn bg-primary/10 hover:bg-primary/20 text-primary px-4 py-2 rounded-lg transition-colors">
+                        <i class="fa fa-plus mr-2"></i>添加产品
+                    </button>
+                </section>
+
+                <!-- 新闻管理 -->
+                <section id="news" class="bg-white p-6 rounded-xl shadow-custom">
+                    <h2 class="text-2xl font-bold text-primary mb-6 flex items-center"><i class="fa fa-newspaper-o mr-2"></i>新闻管理</h2>
+                    
+                    <!-- 新闻1 -->
+                    <div class="border-b border-gray-light pb-6 mb-6">
+                        <h3 class="text-xl font-semibold mb-4">新闻1</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-gray-dark font-medium mb-2">新闻标题</label>
+                                <input type="text" id="news1Title" class="w-full px-4 py-2 border border-gray-light rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50" value="PinSai新生产基地正式投产，年产能提升至1000吨">
+                            </div>
+                            <div>
+                                <label class="block text-gray-dark font-medium mb-2">发布日期</label>
+                                <input type="date" id="news1Date" class="w-full px-4 py-2 border border-gray-light rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50" value="2023-05-28">
+                            </div>
+                            <div>
+                                <label class="block text-gray-dark font-medium mb-2">新闻分类</label>
+                                <input type="text" id="news1Category" class="w-full px-4 py-2 border border-gray-light rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50" value="公司新闻">
+                            </div>
+                            <div>
+                                <label class="block text-gray-dark font-medium mb-2">新闻图片URL</label>
+                                <input type="text" id="news1Image" class="w-full px-4 py-2 border border-gray-light rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50" value="https://picsum.photos/id/180/600/400">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-gray-dark font-medium mb-2">新闻摘要</label>
+                                <textarea id="news1Summary" class="w-full px-4 py-2 border border-gray-light rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 min-h-[100px]">我司位于惠州的新生产基地正式投产，占地面积20000平方米，引入多条自动化生产线，年产能提升至1000吨，将更好地满足客户需求。</textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="add-news-btn bg-primary/10 hover:bg-primary/20 text-primary px-4 py-2 rounded-lg transition-colors">
+                        <i class="fa fa-plus mr-2"></i>添加新闻
+                    </button>
+                </section>
+
+                <!-- 联系信息 -->
+                <section id="contact" class="bg-white p-6 rounded-xl shadow-custom">
+                    <h2 class="text-2xl font-bold text-primary mb-6 flex items-center"><i class="fa fa-envelope mr-2"></i>联系信息</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-gray-dark font-medium mb-2">公司地址</label>
+                            <input type="text" id="companyAddress" class="w-full px-4 py-2 border border-gray-light rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50" value="广东省深圳市南山区科技园南区">
+                        </div>
+                        <div>
+                            <label class="block text-gray-dark font-medium mb-2">联系电话</label>
+                            <input type="text" id="companyPhone" class="w-full px-4 py-2 border border-gray-light rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50" value="0755-12345678">
+                        </div>
+                        <div>
+                            <label class="block text-gray-dark font-medium mb-2">电子邮箱</label>
+                            <input type="email" id="companyEmail" class="w-full px-4 py-2 border border-gray-light rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50" value="info@pinsai.com">
+                        </div>
+                        <div>
+                            <label class="block text-gray-dark font-medium mb-2">工作时间</label>
+                            <input type="text" id="workHours" class="w-full px-4 py-2 border border-gray-light rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50" value="周一至周五: 9:00 - 18:00">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 社交媒体 -->
+                <section id="social-media" class="bg-white p-6 rounded-xl shadow-custom">
+                    <h2 class="text-2xl font-bold text-primary mb-6 flex items-center"><i class="fa fa-weixin mr-2"></i>社交媒体</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-gray-dark font-medium mb-2">微信二维码图片URL</label>
+                            <input type="text" id="wechatQrCode" class="w-full px-4 py-2 border border-gray-light rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50" value="https://picsum.photos/id/237/120/120">
+                        </div>
+                        <div>
+                            <label class="block text-gray-dark font-medium mb-2">微信公众号链接</label>
+                            <input type="text" id="wechatLink" class="w-full px-4 py-2 border border-gray-light rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50" value="#">
+                        </div>
+                        <div>
+                            <label class="block text-gray-dark font-medium mb-2">微博链接</label>
+                            <input type="text" id="weiboLink" class="w-full px-4 py-2 border border-gray-light rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50" value="#">
+                        </div>
+                        <div>
+                            <label class="block text-gray-dark font-medium mb-2">LinkedIn链接</label>
+                            <input type="text" id="linkedinLink" class="w-full px-4 py-2 border border-gray-light rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50" value="#">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 主题设置 -->
+                <section id="theme-settings" class="bg-white p-6 rounded-xl shadow-custom">
+                    <h2 class="text-2xl font-bold text-primary mb-6 flex items-center"><i class="fa fa-paint-brush mr-2"></i>主题设置</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-gray-dark font-medium mb-2">主色调 (primary)</label>
+                            <input type="color" id="primaryColor" class="w-full h-10 border border-gray-light rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50" value="#0F3460">
+                        </div>
+                        <div>
+                            <label class="block text-gray-dark font-medium mb-2">强调色 (accent)</label>
+                            <input type="color" id="accentColor" class="w-full h-10 border border-gray-light rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50" value="#E94560">
+                        </div>
+                        <div>
+                            <label class="block text-gray-dark font-medium mb-2">深色 (dark)</label>
+                            <input type="color" id="darkColor" class="w-full h-10 border border-gray-light rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50" value="#16213E">
+                        </div>
+                        <div>
+                            <label class="block text-gray-dark font-medium mb-2">浅色 (light)</label>
+                            <input type="color" id="lightColor" class="w-full h-10 border border-gray-light rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50" value="#F5F5F5">
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white py-6 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <p>© 2023 网站内容管理系统 - 版本 1.0</p>
+        </div>
+    </footer>
+
+    <!-- 成功提示框 -->
+    <div id="successToast" class="fixed bottom-6 right-6 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 flex items-center">
+        <i class="fa fa-check-circle mr-2"></i>
+        <span>保存成功！</span>
+    </div>
+
+    <!-- 引入管理脚本 -->
+        <script src="admin-script.js"></script>
+        
+        <!-- 引入测试脚本 -->
+        <script src="test-data-functionality.js" type="module"></script>
+    </body>
+</html>

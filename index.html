@@ -1,0 +1,1506 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PinSai导热硅脂 - 专业导热解决方案提供商</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0F3460',
+                        secondary: '#1A3A5F',
+                        accent: '#E94560',
+                        dark: '#16213E',
+                        light: '#F5F5F5',
+                        'gray-dark': '#333333',
+                        'gray-medium': '#666666',
+                        'gray-light': '#EEEEEE'
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .text-shadow-lg {
+                text-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            }
+            .transition-transform-opacity {
+                transition-property: transform, opacity;
+            }
+            .bg-gradient-industrial {
+                background: linear-gradient(135deg, #0F3460 0%, #16213E 100%);
+            }
+            .scrollbar-hide::-webkit-scrollbar {
+                display: none;
+            }
+            .scrollbar-hide {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+        }
+    </style>
+    
+    <!-- 主页面数据同步脚本 -->
+    <script>
+        /**
+         * 从site-data文件加载数据
+         */
+        async function loadDataFromFile() {
+            try {
+                const response = await fetch('site-data');
+                if (response.ok) {
+                    const data = await response.json();
+                    // 将文件数据更新到页面
+                    updatePageWithData(data);
+                    // 同时保存到localStorage作为备份
+                    localStorage.setItem('websiteData', JSON.stringify(data));
+                } else {
+                    console.error('无法加载数据文件:', response.statusText);
+                    // 如果文件加载失败，尝试从localStorage加载
+                    loadDataFromLocalStorage();
+                }
+            } catch (e) {
+                console.error('加载数据文件失败:', e);
+                // 如果发生错误，尝试从localStorage加载
+                loadDataFromLocalStorage();
+            }
+        }
+
+        /**
+         * 从localStorage加载数据并更新页面内容
+         */
+        function loadDataFromLocalStorage() {
+            const savedData = localStorage.getItem('websiteData');
+            if (savedData) {
+                try {
+                    const data = JSON.parse(savedData);
+                    // 使用数据更新页面
+                    updatePageWithData(data);
+                } catch (e) {
+                    console.error('解析保存的数据失败:', e);
+                }
+            }
+        }
+
+        /**
+         * 使用数据更新页面内容
+         */
+        function updatePageWithData(data) {
+            // 更新网站标题
+            if (data.siteTitle || data.siteName) {
+                document.title = data.siteTitle || data.siteName;
+            }
+            
+            // 更新公司名称
+            if (data.companyName || data.siteName) {
+                document.querySelectorAll('.company-name').forEach(el => {
+                    el.textContent = data.companyName || data.siteName;
+                });
+            }
+            
+            // 更新公司简介
+            if (data.companyDescription) {
+                document.querySelectorAll('.company-description').forEach(el => {
+                    el.textContent = data.companyDescription;
+                });
+            }
+            
+            // 更新联系信息
+            if (data.contactInfo) {
+                if (data.contactInfo.address) {
+                    document.querySelectorAll('.company-address').forEach(el => {
+                        el.textContent = data.contactInfo.address;
+                    });
+                }
+                if (data.contactInfo.phone) {
+                    document.querySelectorAll('.company-phone').forEach(el => {
+                        el.textContent = data.contactInfo.phone;
+                    });
+                }
+                if (data.contactInfo.email) {
+                    document.querySelectorAll('.company-email').forEach(el => {
+                        el.textContent = data.contactInfo.email;
+                    });
+                }
+            } else {
+                if (data.companyAddress) {
+                    document.querySelectorAll('.company-address').forEach(el => {
+                        el.textContent = data.companyAddress;
+                    });
+                }
+                if (data.companyPhone) {
+                    document.querySelectorAll('.company-phone').forEach(el => {
+                        el.textContent = data.companyPhone;
+                    });
+                }
+                if (data.companyEmail) {
+                    document.querySelectorAll('.company-email').forEach(el => {
+                        el.textContent = data.companyEmail;
+                    });
+                }
+            }
+            
+            if (data.workHours) {
+                document.querySelectorAll('.work-hours').forEach(el => {
+                    el.textContent = data.workHours;
+                });
+            }
+            
+            // 更新社交媒体链接
+            if (data.wechatLink) {
+                const wechatLinks = document.querySelectorAll('a:has(.fa-weixin)');
+                wechatLinks.forEach(link => {
+                    link.href = data.wechatLink;
+                });
+            }
+            if (data.weiboLink) {
+                const weiboLinks = document.querySelectorAll('a:has(.fa-weibo)');
+                weiboLinks.forEach(link => {
+                    link.href = data.weiboLink;
+                });
+            }
+            if (data.linkedinLink) {
+                const linkedinLinks = document.querySelectorAll('a:has(.fa-linkedin)');
+                linkedinLinks.forEach(link => {
+                    link.href = data.linkedinLink;
+                });
+            }
+            
+            // 更新微信二维码
+            if (data.wechatQrCode) {
+                const qrCodeImages = document.querySelectorAll('.wechat-qr-code');
+                qrCodeImages.forEach(img => {
+                    img.src = data.wechatQrCode;
+                });
+            }
+            
+            // 更新产品信息
+            if (data.products && data.products.length > 0) {
+                updateProducts(data.products);
+            }
+            
+            // 更新新闻信息
+            if (data.news && data.news.length > 0) {
+                updateNews(data.news);
+            }
+            
+            // 更新主题颜色
+            if (data.primaryColor || data.accentColor || data.darkColor || data.lightColor) {
+                updateThemeColors(data);
+            }
+        }
+        
+        /**
+         * 更新产品信息
+         */
+        function updateProducts(products) {
+            // 获取产品容器
+            const productContainers = document.querySelectorAll('.products-container');
+            if (productContainers.length > 0) {
+                productContainers.forEach(container => {
+                    // 清空容器
+                    container.innerHTML = '';
+                    
+                    // 添加产品卡片
+                    products.forEach(product => {
+                        const productCard = document.createElement('div');
+                        productCard.className = 'bg-white rounded-xl shadow-custom overflow-hidden hover:shadow-xl transition-shadow duration-300';
+                        
+                        productCard.innerHTML = `
+                            <div class="relative overflow-hidden">
+                                <img src="${product.image}" alt="${product.name}" class="w-full h-64 object-cover transform hover:scale-105 transition-transform duration-500">
+                                <div class="absolute top-4 left-4 bg-accent text-white text-sm font-semibold px-3 py-1 rounded-full">
+                                    ${product.thermal}
+                                </div>
+                            </div>
+                            <div class="p-6">
+                                <h3 class="text-xl font-bold text-primary mb-3">${product.name}</h3>
+                                <p class="text-gray-medium mb-6">${product.description}</p>
+                                <a href="#" class="inline-flex items-center text-primary font-semibold hover:text-accent transition-colors">
+                                    查看详情
+                                    <i class="fa fa-arrow-right ml-2 transform hover:translate-x-1 transition-transform"></i>
+                                </a>
+                            </div>
+                        `;
+                        
+                        container.appendChild(productCard);
+                    });
+                });
+            }
+        }
+        
+        /**
+         * 更新新闻信息
+         */
+        function updateNews(news) {
+            // 获取新闻容器
+            const newsContainers = document.querySelectorAll('.news-container');
+            if (newsContainers.length > 0) {
+                newsContainers.forEach(container => {
+                    // 清空容器
+                    container.innerHTML = '';
+                    
+                    // 添加新闻卡片
+                    news.forEach(newsItem => {
+                        const categoryClass = newsItem.category === '公司新闻' ? 'bg-primary' : 'bg-gray-medium';
+                        const newsCard = document.createElement('div');
+                        newsCard.className = 'bg-white rounded-xl shadow-custom overflow-hidden hover:shadow-xl transition-shadow duration-300';
+                        
+                        newsCard.innerHTML = `
+                            <div class="relative overflow-hidden">
+                                <img src="${newsItem.image}" alt="${newsItem.title}" class="w-full h-48 object-cover transform hover:scale-105 transition-transform duration-500">
+                                <div class="absolute top-4 left-4 ${categoryClass} text-white text-sm font-semibold px-3 py-1 rounded-full">
+                                    ${newsItem.category}
+                                </div>
+                            </div>
+                            <div class="p-6">
+                                <div class="text-sm text-gray-medium mb-3">
+                                    <i class="fa fa-calendar mr-1"></i> ${newsItem.date}
+                                </div>
+                                <h3 class="text-xl font-bold text-primary mb-3 hover:text-accent transition-colors">${newsItem.title}</h3>
+                                <p class="text-gray-medium mb-6">${newsItem.summary}</p>
+                                <a href="#" class="inline-flex items-center text-primary font-semibold hover:text-accent transition-colors">
+                                    阅读全文
+                                    <i class="fa fa-arrow-right ml-2 transform hover:translate-x-1 transition-transform"></i>
+                                </a>
+                            </div>
+                        `;
+                        
+                        container.appendChild(newsCard);
+                    });
+                });
+            }
+        }
+        
+        /**
+         * 更新主题颜色
+         */
+        function updateThemeColors(data) {
+            // 创建或更新样式标签
+            let styleElement = document.getElementById('dynamic-theme-styles');
+            if (!styleElement) {
+                styleElement = document.createElement('style');
+                styleElement.id = 'dynamic-theme-styles';
+                document.head.appendChild(styleElement);
+            }
+            
+            // 构建CSS变量
+            let cssVariables = ':root {';
+            if (data.primaryColor) {
+                cssVariables += `--primary: ${data.primaryColor};`;
+            }
+            if (data.accentColor) {
+                cssVariables += `--accent: ${data.accentColor};`;
+            }
+            if (data.darkColor) {
+                cssVariables += `--dark: ${data.darkColor};`;
+            }
+            if (data.lightColor) {
+                cssVariables += `--light: ${data.lightColor};`;
+            }
+            cssVariables += '}';
+            
+            styleElement.textContent = cssVariables;
+        }
+        
+        // 已在window.load事件中处理数据加载，这里不再重复加载
+    </script>
+</head>
+
+<body class="font-inter text-gray-dark bg-light antialiased">
+    <!-- 导航栏 -->
+    <header id="navbar" class="fixed w-full z-50 transition-all duration-300 bg-transparent">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <!-- Logo -->
+                <a href="#" class="flex items-center space-x-2">
+                    <div class="w-10 h-10 bg-accent rounded-lg flex items-center justify-center">
+                        <i class="fa fa-fire text-white text-xl"></i>
+                    </div>
+                    <span class="text-2xl font-bold text-white text-shadow-lg">PinSai</span>
+                </a>
+                
+                <!-- 桌面导航 -->
+                <nav class="hidden md:flex space-x-8">
+                    <a href="#home" class="text-white hover:text-accent transition-colors font-medium">首页</a>
+                    <a href="#products" class="text-white hover:text-accent transition-colors font-medium">产品中心</a>
+                    <a href="#technology" class="text-white hover:text-accent transition-colors font-medium">技术优势</a>
+                    <a href="#applications" class="text-white hover:text-accent transition-colors font-medium">应用领域</a>
+                    <a href="#company" class="text-white hover:text-accent transition-colors font-medium">关于我们</a>
+                    <a href="#contact" class="text-white hover:text-accent transition-colors font-medium">联系我们</a>
+                </nav>
+                
+                <!-- 联系按钮 -->
+                <a href="#contact" class="hidden md:inline-block bg-accent hover:bg-accent/90 text-white font-medium py-2 px-6 rounded-lg transition-all transform hover:scale-105">
+                    咨询产品
+                </a>
+                
+                <!-- 移动端菜单按钮 -->
+                <button id="menu-toggle" class="md:hidden text-white text-2xl">
+                    <i class="fa fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 移动端导航菜单 -->
+        <div id="mobile-menu" class="md:hidden hidden bg-dark/95 backdrop-blur-md">
+            <div class="container mx-auto px-4 py-4 space-y-4">
+                <a href="#home" class="block text-white hover:text-accent transition-colors font-medium py-2">首页</a>
+                <a href="#products" class="block text-white hover:text-accent transition-colors font-medium py-2">产品中心</a>
+                <a href="#technology" class="block text-white hover:text-accent transition-colors font-medium py-2">技术优势</a>
+                <a href="#applications" class="block text-white hover:text-accent transition-colors font-medium py-2">应用领域</a>
+                <a href="#company" class="block text-white hover:text-accent transition-colors font-medium py-2">关于我们</a>
+                <a href="#contact" class="block text-white hover:text-accent transition-colors font-medium py-2">联系我们</a>
+                <a href="#contact" class="block bg-accent hover:bg-accent/90 text-white font-medium py-3 px-6 rounded-lg text-center transition-all">
+                    咨询产品
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 首页横幅 -->
+    <section id="home" class="relative min-h-screen flex items-center bg-gradient-industrial overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <div class="absolute inset-0 bg-primary/40"></div>
+            <img src="https://picsum.photos/id/180/1920/1080" alt="导热硅脂应用场景" class="w-full h-full object-cover opacity-40">
+            <!-- 装饰性几何图形 -->
+            <div class="absolute -top-20 -right-20 w-96 h-96 bg-accent/10 rounded-full blur-3xl"></div>
+            <div class="absolute top-1/3 -left-40 w-80 h-80 bg-secondary/20 rounded-full blur-3xl"></div>
+        </div>
+        
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-24">
+            <div class="max-w-3xl">
+                <h1 class="text-[clamp(2.5rem,5vw,4rem)] font-bold text-white leading-tight text-shadow-lg mb-6 animate-fade-in">
+                    专业导热硅脂<br>
+                    <span class="text-accent">散热解决方案</span>
+                </h1>
+                <p class="text-[clamp(1rem,2vw,1.25rem)] text-gray-100 mb-8 max-w-2xl">
+                    15年行业经验，国家高新技术企业，为电子、汽车、LED等行业提供全系列高性能导热解决方案。
+                </p>
+                
+                <div class="flex flex-wrap gap-4 mb-12">
+                    <a href="#products" class="bg-accent hover:bg-accent/90 text-white font-medium py-3 px-8 rounded-lg transition-all transform hover:scale-105 flex items-center">
+                        <span>查看产品</span>
+                        <i class="fa fa-arrow-right ml-2"></i>
+                    </a>
+                    <a href="#contact" class="bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white font-medium py-3 px-8 rounded-lg border border-white/30 transition-all">
+                        咨询方案
+                    </a>
+                </div>
+                
+                <!-- 核心优势 -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white/10 backdrop-blur-sm p-6 rounded-lg border border-white/10 hover:border-accent/50 transition-all transform hover:-translate-y-1">
+                        <div class="w-12 h-12 bg-accent/20 rounded-lg flex items-center justify-center mb-4">
+                            <i class="fa fa-calendar text-accent text-xl"></i>
+                        </div>
+                        <h3 class="text-white text-xl font-semibold mb-2">15年行业经验</h3>
+                        <p class="text-gray-200">专注导热材料研发生产，积累丰富行业经验</p>
+                    </div>
+                    
+                    <div class="bg-white/10 backdrop-blur-sm p-6 rounded-lg border border-white/10 hover:border-accent/50 transition-all transform hover:-translate-y-1">
+                        <div class="w-12 h-12 bg-accent/20 rounded-lg flex items-center justify-center mb-4">
+                            <i class="fa fa-cubes text-accent text-xl"></i>
+                        </div>
+                        <h3 class="text-white text-xl font-semibold mb-2">全系列解决方案</h3>
+                        <p class="text-gray-200">满足不同场景需求，提供定制化导热解决方案</p>
+                    </div>
+                    
+                    <div class="bg-white/10 backdrop-blur-sm p-6 rounded-lg border border-white/10 hover:border-accent/50 transition-all transform hover:-translate-y-1">
+                        <div class="w-12 h-12 bg-accent/20 rounded-lg flex items-center justify-center mb-4">
+                            <i class="fa fa-certificate text-accent text-xl"></i>
+                        </div>
+                        <h3 class="text-white text-xl font-semibold mb-2">高新技术认证</h3>
+                        <p class="text-gray-200">国家高新技术企业，多项专利技术保障</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 滚动指示器 -->
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white animate-bounce">
+            <a href="#products" class="flex flex-col items-center">
+                <span class="mb-2 text-sm">向下滚动</span>
+                <i class="fa fa-chevron-down"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- 产品展示区 -->
+    <section id="products" class="py-20 bg-white">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold text-primary mb-4">
+                    高性能导热硅脂产品
+                </h2>
+                <p class="text-gray-medium max-w-2xl mx-auto text-lg">
+                    我们提供全系列导热硅脂产品，满足不同行业、不同场景的散热需求，
+                    从高导热到耐高温，从绝缘到特殊应用，为您的设备提供可靠散热保障。
+                </p>
+            </div>
+            
+            <!-- 产品筛选 -->
+            <div class="flex flex-wrap justify-center gap-3 mb-12" id="product-filters">
+                <button class="filter-btn active px-6 py-2 rounded-full bg-primary text-white font-medium transition-all" data-filter="all">
+                    全部产品
+                </button>
+                <button class="filter-btn px-6 py-2 rounded-full bg-gray-light text-gray-dark font-medium hover:bg-primary/10 transition-all" data-filter="high-thermal">
+                    高导热型
+                </button>
+                <button class="filter-btn px-6 py-2 rounded-full bg-gray-light text-gray-dark font-medium hover:bg-primary/10 transition-all" data-filter="high-temp">
+                    耐高温型
+                </button>
+                <button class="filter-btn px-6 py-2 rounded-full bg-gray-light text-gray-dark font-medium hover:bg-primary/10 transition-all" data-filter="insulating">
+                    绝缘型
+                </button>
+                <button class="filter-btn px-6 py-2 rounded-full bg-gray-light text-gray-dark font-medium hover:bg-primary/10 transition-all" data-filter="special">
+                    特殊应用
+                </button>
+            </div>
+            
+            <!-- 产品网格 - 将通过JavaScript动态加载内容 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="products-grid">
+                <!-- 数据将从site-data文件动态加载 -->
+            </div>
+            
+            <!-- 查看更多按钮 -->
+            <div class="text-center mt-12">
+                <a href="#" class="inline-block bg-primary hover:bg-primary/90 text-white font-medium py-3 px-8 rounded-lg transition-all transform hover:scale-105">
+                    查看全部产品
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 技术优势板块 -->
+    <section id="technology" class="py-20 bg-gray-light">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold text-primary mb-4">
+                    核心技术优势
+                </h2>
+                <p class="text-gray-medium max-w-2xl mx-auto text-lg">
+                    我们坚持技术创新，不断提升产品性能，通过材料科学与工艺技术的结合，
+                    为客户提供卓越的导热解决方案。
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- 技术优势1 -->
+                <div class="bg-white p-8 rounded-xl shadow-sm hover:shadow-md transition-all group">
+                    <div class="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mb-6 text-primary text-2xl group-hover:bg-primary group-hover:text-white transition-all">
+                        <i class="fa fa-microchip"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-primary mb-3">纳米级导热填料</h3>
+                    <p class="text-gray-medium">
+                        采用先进纳米级导热填料，实现更高的导热效率和更均匀的导热性能，
+                        确保热量快速有效传递。
+                    </p>
+                </div>
+                
+                <!-- 技术优势2 -->
+                <div class="bg-white p-8 rounded-xl shadow-sm hover:shadow-md transition-all group">
+                    <div class="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mb-6 text-primary text-2xl group-hover:bg-primary group-hover:text-white transition-all">
+                        <i class="fa fa-thermometer-half"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-primary mb-3">稳定的热阻性能</h3>
+                    <p class="text-gray-medium">
+                        特殊配方设计，确保在宽温度范围内保持稳定的热阻性能，
+                        即使在极端环境下也能可靠工作。
+                    </p>
+                </div>
+                
+                <!-- 技术优势3 -->
+                <div class="bg-white p-8 rounded-xl shadow-sm hover:shadow-md transition-all group">
+                    <div class="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mb-6 text-primary text-2xl group-hover:bg-primary group-hover:text-white transition-all">
+                        <i class="fa fa-clock-o"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-primary mb-3">长期可靠性</h3>
+                    <p class="text-gray-medium">
+                        经过严格的老化测试，产品具有优异的长期可靠性，
+                        减少设备维护成本，延长设备使用寿命。
+                    </p>
+                </div>
+                
+                <!-- 技术优势4 -->
+                <div class="bg-white p-8 rounded-xl shadow-sm hover:shadow-md transition-all group">
+                    <div class="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mb-6 text-primary text-2xl group-hover:bg-primary group-hover:text-white transition-all">
+                        <i class="fa fa-flask"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-primary mb-3">先进配方技术</h3>
+                    <p class="text-gray-medium">
+                        自主研发的配方技术，平衡导热性能、稳定性和易用性，
+                        满足不同应用场景的特殊需求。
+                    </p>
+                </div>
+                
+                <!-- 技术优势5 -->
+                <div class="bg-white p-8 rounded-xl shadow-sm hover:shadow-md transition-all group">
+                    <div class="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mb-6 text-primary text-2xl group-hover:bg-primary group-hover:text-white transition-all">
+                        <i class="fa fa-industry"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-primary mb-3">精密制造工艺</h3>
+                    <p class="text-gray-medium">
+                        采用自动化生产设备和精密制造工艺，确保产品质量一致性，
+                        每批次产品性能稳定可靠。
+                    </p>
+                </div>
+                
+                <!-- 技术优势6 -->
+                <div class="bg-white p-8 rounded-xl shadow-sm hover:shadow-md transition-all group">
+                    <div class="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mb-6 text-primary text-2xl group-hover:bg-primary group-hover:text-white transition-all">
+                        <i class="fa fa-check-square-o"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-primary mb-3">环保安全认证</h3>
+                    <p class="text-gray-medium">
+                        产品符合RoHS、REACH等国际环保标准，通过多项安全认证，
+                        确保使用安全和环境友好。
+                    </p>
+                </div>
+            </div>
+            
+            <!-- 性能对比图表 -->
+            <div class="mt-20 bg-white p-8 rounded-xl shadow-sm">
+                <h3 class="text-2xl font-semibold text-primary mb-6 text-center">
+                    导热性能对比
+                </h3>
+                <div class="h-80">
+                    <canvas id="thermalPerformanceChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 应用领域展示 -->
+    <section id="applications" class="py-20 bg-white">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold text-primary mb-4">
+                    广泛应用领域
+                </h2>
+                <p class="text-gray-medium max-w-2xl mx-auto text-lg">
+                    我们的导热硅脂产品广泛应用于各个行业，为不同类型的设备提供高效散热解决方案，
+                    保障设备稳定运行，延长使用寿命。
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- 应用领域1 -->
+                <div class="flex flex-col md:flex-row gap-6 bg-gray-light rounded-xl overflow-hidden group hover:shadow-lg transition-all">
+                    <div class="md:w-2/5 overflow-hidden">
+                        <img src="https://picsum.photos/id/160/600/800" alt="电子设备应用" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    </div>
+                    <div class="md:w-3/5 p-6 flex flex-col justify-center">
+                        <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4 text-primary text-xl">
+                            <i class="fa fa-laptop"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-primary mb-3">电子设备</h3>
+                        <p class="text-gray-medium mb-4">
+                            应用于CPU、GPU、芯片组等电子元件的散热，适用于计算机、服务器、
+                            通讯设备等，确保电子元件在正常温度范围内稳定运行。
+                        </p>
+                        <ul class="space-y-2 text-gray-dark">
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-accent mt-1 mr-2"></i>
+                                <span>计算机CPU与散热器之间的热传导</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-accent mt-1 mr-2"></i>
+                                <span>服务器芯片组散热解决方案</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-accent mt-1 mr-2"></i>
+                                <span>通讯设备处理器散热应用</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- 应用领域2 -->
+                <div class="flex flex-col md:flex-row gap-6 bg-gray-light rounded-xl overflow-hidden group hover:shadow-lg transition-all">
+                    <div class="md:w-2/5 overflow-hidden">
+                        <img src="https://picsum.photos/id/1071/600/800" alt="汽车电子应用" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    </div>
+                    <div class="md:w-3/5 p-6 flex flex-col justify-center">
+                        <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4 text-primary text-xl">
+                            <i class="fa fa-car"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-primary mb-3">汽车电子</h3>
+                        <p class="text-gray-medium mb-4">
+                            为汽车电子控制单元、LED车灯、传感器等提供可靠散热，
+                            适应汽车内部复杂的温度环境和振动条件。
+                        </p>
+                        <ul class="space-y-2 text-gray-dark">
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-accent mt-1 mr-2"></i>
+                                <span>发动机控制模块(ECU)散热</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-accent mt-1 mr-2"></i>
+                                <span>汽车LED大灯散热解决方案</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-accent mt-1 mr-2"></i>
+                                <span>车载信息娱乐系统散热</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- 应用领域3 -->
+                <div class="flex flex-col md:flex-row gap-6 bg-gray-light rounded-xl overflow-hidden group hover:shadow-lg transition-all">
+                    <div class="md:w-2/5 overflow-hidden">
+                        <img src="https://picsum.photos/id/1025/600/800" alt="LED照明应用" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    </div>
+                    <div class="md:w-3/5 p-6 flex flex-col justify-center">
+                        <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4 text-primary text-xl">
+                            <i class="fa fa-lightbulb-o"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-primary mb-3">LED照明</h3>
+                        <p class="text-gray-medium mb-4">
+                            为LED灯具提供高效散热解决方案，降低LED芯片温度，
+                            提高光效，延长LED使用寿命，适用于各种室内外照明设备。
+                        </p>
+                        <ul class="space-y-2 text-gray-dark">
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-accent mt-1 mr-2"></i>
+                                <span>LED路灯与隧道灯散热</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-accent mt-1 mr-2"></i>
+                                <span>工业照明与商业照明应用</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-accent mt-1 mr-2"></i>
+                                <span>景观照明与装饰照明散热</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- 应用领域4 -->
+                <div class="flex flex-col md:flex-row gap-6 bg-gray-light rounded-xl overflow-hidden group hover:shadow-lg transition-all">
+                    <div class="md:w-2/5 overflow-hidden">
+                        <img src="https://picsum.photos/id/96/600/800" alt="工业机械应用" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    </div>
+                    <div class="md:w-3/5 p-6 flex flex-col justify-center">
+                        <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4 text-primary text-xl">
+                            <i class="fa fa-cogs"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-primary mb-3">工业机械</h3>
+                        <p class="text-gray-medium mb-4">
+                            为工业控制系统、电力电子设备、自动化设备等提供散热解决方案，
+                            适应工业环境的高温、粉尘等恶劣条件。
+                        </p>
+                        <ul class="space-y-2 text-gray-dark">
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-accent mt-1 mr-2"></i>
+                                <span>工业控制柜散热解决方案</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-accent mt-1 mr-2"></i>
+                                <span>电力电子设备散热应用</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-accent mt-1 mr-2"></i>
+                                <span>自动化设备控制器散热</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 企业介绍部分 -->
+    <section id="company" class="py-20 bg-gray-light">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold text-primary mb-4">
+                    关于 PinSai
+                </h2>
+                <p class="text-gray-medium max-w-2xl mx-auto text-lg">
+                    15年专注导热材料研发与生产，国家高新技术企业，我们致力于为全球客户提供
+                    高品质的导热解决方案。
+                </p>
+            </div>
+            
+            <!-- 企业简介 -->
+            <div class="bg-white rounded-xl shadow-sm p-8 mb-16">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <h3 class="text-2xl font-semibold text-primary mb-6">企业简介</h3>
+                        <p class="text-gray-medium mb-4">
+                            PinSai成立于2008年，是一家专注于导热材料研发、生产和销售的高新技术企业。
+                            15年来，我们始终坚持以技术创新为核心，以产品质量为生命，为全球客户提供
+                            高性能的导热硅脂产品和解决方案。
+                        </p>
+                        <p class="text-gray-medium mb-4">
+                            公司拥有现代化的生产基地和先进的研发中心，通过了ISO9001质量管理体系认证、
+                            ISO14001环境管理体系认证，产品符合RoHS、REACH等国际环保标准。
+                        </p>
+                        <p class="text-gray-medium">
+                            我们的产品广泛应用于电子、汽车、LED照明、工业机械等领域，
+                            与众多世界500强企业建立了长期稳定的合作关系。
+                        </p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <img src="https://picsum.photos/id/180/600/400" alt="公司工厂" class="rounded-lg shadow-sm hover:shadow-md transition-all transform hover:-translate-y-1">
+                        <img src="https://picsum.photos/id/116/600/400" alt="研发中心" class="rounded-lg shadow-sm hover:shadow-md transition-all transform hover:-translate-y-1 mt-8">
+                        <img src="https://picsum.photos/id/177/600/400" alt="生产车间" class="rounded-lg shadow-sm hover:shadow-md transition-all transform hover:-translate-y-1">
+                        <img src="https://picsum.photos/id/169/600/400" alt="质检中心" class="rounded-lg shadow-sm hover:shadow-md transition-all transform hover:-translate-y-1 mt-8">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 发展历程 -->
+            <div class="mb-16">
+                <h3 class="text-2xl font-semibold text-primary mb-8 text-center">发展历程</h3>
+                <div class="relative">
+                    <!-- 时间线 -->
+                    <div class="absolute left-0 md:left-1/2 top-0 bottom-0 w-0.5 bg-primary/20 transform md:-translate-x-1/2"></div>
+                    
+                    <!-- 历程项目 -->
+                    <div class="space-y-12">
+                        <!-- 2008 -->
+                        <div class="relative flex flex-col md:flex-row items-center">
+                            <div class="md:w-1/2 md:pr-12 md:text-right order-2 md:order-1 mt-6 md:mt-0">
+                                <h4 class="text-xl font-semibold text-primary mb-2">公司成立</h4>
+                                <p class="text-gray-medium">PinSai在深圳成立，专注于导热材料研发与生产，
+                                推出首款HC-100系列导热硅脂产品。</p>
+                            </div>
+                            <div class="z-10 w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold order-1 md:order-2">
+                                2008
+                            </div>
+                            <div class="md:w-1/2 md:pl-12 order-3"></div>
+                        </div>
+                        
+                        <!-- 2012 -->
+                        <div class="relative flex flex-col md:flex-row items-center">
+                            <div class="md:w-1/2 md:pr-12 md:text-right order-2 md:order-1 mt-6 md:mt-0"></div>
+                            <div class="z-10 w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold order-1 md:order-2">
+                                2012
+                            </div>
+                            <div class="md:w-1/2 md:pl-12 order-3">
+                                <h4 class="text-xl font-semibold text-primary mb-2">扩大生产</h4>
+                                <p class="text-gray-medium">建成现代化生产基地，年产能达到500吨，
+                                产品开始出口到欧美市场。</p>
+                            </div>
+                        </div>
+                        
+                        <!-- 2015 -->
+                        <div class="relative flex flex-col md:flex-row items-center">
+                            <div class="md:w-1/2 md:pr-12 md:text-right order-2 md:order-1 mt-6 md:mt-0">
+                                <h4 class="text-xl font-semibold text-primary mb-2">高新技术企业认证</h4>
+                                <p class="text-gray-medium">获得国家高新技术企业认证，研发中心
+                                投入使用，推出高导热系列产品。</p>
+                            </div>
+                            <div class="z-10 w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold order-1 md:order-2">
+                                2015
+                            </div>
+                            <div class="md:w-1/2 md:pl-12 order-3"></div>
+                        </div>
+                        
+                        <!-- 2018 -->
+                        <div class="relative flex flex-col md:flex-row items-center">
+                            <div class="md:w-1/2 md:pr-12 md:text-right order-2 md:order-1 mt-6 md:mt-0"></div>
+                            <div class="z-10 w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold order-1 md:order-2">
+                                2018
+                            </div>
+                            <div class="md:w-1/2 md:pl-12 order-3">
+                                <h4 class="text-xl font-semibold text-primary mb-2">国际市场拓展</h4>
+                                <p class="text-gray-medium">在德国、美国设立分支机构，产品
+                                进入全球前50大电子企业供应链。</p>
+                            </div>
+                        </div>
+                        
+                        <!-- 2023 -->
+                        <div class="relative flex flex-col md:flex-row items-center">
+                            <div class="md:w-1/2 md:pr-12 md:text-right order-2 md:order-1 mt-6 md:mt-0">
+                                <h4 class="text-xl font-semibold text-primary mb-2">技术突破</h4>
+                                <p class="text-gray-medium">研发出导热系数10W/m·K以上的高性能产品，
+                                获得多项国际专利，年产能突破1000吨。</p>
+                            </div>
+                            <div class="z-10 w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center font-bold order-1 md:order-2">
+                                2023
+                            </div>
+                            <div class="md:w-1/2 md:pl-12 order-3"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 研发实力和质量控制 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- 研发实力 -->
+                <div class="bg-white p-8 rounded-xl shadow-sm">
+                    <div class="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mb-6 text-primary text-2xl">
+                        <i class="fa fa-flask"></i>
+                    </div>
+                    <h3 class="text-2xl font-semibold text-primary mb-6">研发实力</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <div class="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary mt-0.5 mr-3 flex-shrink-0">
+                                <i class="fa fa-check text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-dark mb-1">专业研发团队</h4>
+                                <p class="text-gray-medium text-sm">拥有30余人的专业研发团队，其中博士5人，
+                                硕士12人，具有丰富的导热材料研发经验。</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <div class="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary mt-0.5 mr-3 flex-shrink-0">
+                                <i class="fa fa-check text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-dark mb-1">先进研发设备</h4>
+                                <p class="text-gray-medium text-sm">配备导热系数测试仪、热阻测试仪、
+                                老化试验箱等先进研发设备，总价值超过1000万元。</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <div class="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary mt-0.5 mr-3 flex-shrink-0">
+                                <i class="fa fa-check text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-dark mb-1">自主知识产权</h4>
+                                <p class="text-gray-medium text-sm">拥有发明专利23项，实用新型专利45项，
+                                参与制定多项行业标准。</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <div class="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary mt-0.5 mr-3 flex-shrink-0">
+                                <i class="fa fa-check text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-dark mb-1">产学研合作</h4>
+                                <p class="text-gray-medium text-sm">与清华大学、哈尔滨工业大学等高校
+                                建立长期合作关系，共同推进导热材料技术创新。</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- 质量控制 -->
+                <div class="bg-white p-8 rounded-xl shadow-sm">
+                    <div class="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mb-6 text-primary text-2xl">
+                        <i class="fa fa-check-circle"></i>
+                    </div>
+                    <h3 class="text-2xl font-semibold text-primary mb-6">质量控制</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <div class="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary mt-0.5 mr-3 flex-shrink-0">
+                                <i class="fa fa-check text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-dark mb-1">完善的质量管理体系</h4>
+                                <p class="text-gray-medium text-sm">通过ISO9001质量管理体系认证，
+                                建立从原材料到成品的全流程质量控制体系。</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <div class="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary mt-0.5 mr-3 flex-shrink-0">
+                                <i class="fa fa-check text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-dark mb-1">精密检测设备</h4>
+                                <p class="text-gray-medium text-sm">拥有精密检测设备50余台，包括
+                                气相色谱仪、红外光谱仪等，确保产品质量稳定。</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <div class="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary mt-0.5 mr-3 flex-shrink-0">
+                                <i class="fa fa-check text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-dark mb-1">严格的检测标准</h4>
+                                <p class="text-gray-medium text-sm">每批次产品均经过严格检测，
+                                检测项目包括导热系数、热阻、挥发损失等16项指标。</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <div class="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary mt-0.5 mr-3 flex-shrink-0">
+                                <i class="fa fa-check text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-dark mb-1">国际认证</h4>
+                                <p class="text-gray-medium text-sm">产品通过RoHS、REACH、UL等
+                                国际认证，符合全球主要市场的环保和安全标准。</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 客户见证区 -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold text-primary mb-4">
+                    客户见证
+                </h2>
+                <p class="text-gray-medium max-w-2xl mx-auto text-lg">
+                    多年来，我们与众多知名企业建立了长期稳定的合作关系，
+                    他们的信任是我们不断前进的动力。
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- 客户1 -->
+                <div class="bg-gray-light p-8 rounded-xl hover:shadow-lg transition-all relative">
+                    <div class="text-accent text-6xl absolute top-6 right-6 opacity-20">
+                        <i class="fa fa-quote-right"></i>
+                    </div>
+                    <div class="mb-6">
+                        <img src="https://picsum.photos/id/1/100/100" alt="客户logo" class="h-12 w-auto mb-4">
+                        <h3 class="text-xl font-semibold text-primary mb-1">华为技术有限公司</h3>
+                        <p class="text-gray-medium text-sm">通讯设备制造商</p>
+                    </div>
+                    <p class="text-gray-dark relative z-10">
+                        "PinSai的导热硅脂产品性能稳定，质量可靠，
+                        为我们的通讯设备提供了卓越的散热解决方案，
+                        帮助我们的产品在高温环境下保持稳定运行。"
+                    </p>
+                    <div class="mt-6 flex items-center">
+                        <img src="https://picsum.photos/id/1005/100/100" alt="客户代表" class="w-12 h-12 rounded-full object-cover mr-4">
+                        <div>
+                            <p class="font-medium text-gray-dark">张明</p>
+                            <p class="text-gray-medium text-sm">硬件研发总监</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 客户2 -->
+                <div class="bg-gray-light p-8 rounded-xl hover:shadow-lg transition-all relative">
+                    <div class="text-accent text-6xl absolute top-6 right-6 opacity-20">
+                        <i class="fa fa-quote-right"></i>
+                    </div>
+                    <div class="mb-6">
+                        <img src="https://picsum.photos/id/2/100/100" alt="客户logo" class="h-12 w-auto mb-4">
+                        <h3 class="text-xl font-semibold text-primary mb-1">比亚迪汽车</h3>
+                        <p class="text-gray-medium text-sm">新能源汽车制造商</p>
+                    </div>
+                    <p class="text-gray-dark relative z-10">
+                        "在汽车电子部件的散热解决方案中，PinS'ai的产品表现出色，
+                        能够适应汽车复杂的工作环境，为我们的新能源汽车提供了可靠的
+                        散热保障，合作非常愉快。"
+                    </p>
+                    <div class="mt-6 flex items-center">
+                        <img src="https://picsum.photos/id/1012/100/100" alt="客户代表" class="w-12 h-12 rounded-full object-cover mr-4">
+                        <div>
+                            <p class="font-medium text-gray-dark">李华</p>
+                            <p class="text-gray-medium text-sm">电子系统工程师</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 客户3 -->
+                <div class="bg-gray-light p-8 rounded-xl hover:shadow-lg transition-all relative">
+                    <div class="text-accent text-6xl absolute top-6 right-6 opacity-20">
+                        <i class="fa fa-quote-right"></i>
+                    </div>
+                    <div class="mb-6">
+                        <img src="https://picsum.photos/id/3/100/100" alt="客户logo" class="h-12 w-auto mb-4">
+                        <h3 class="text-xl font-semibold text-primary mb-1">飞利浦照明</h3>
+                        <p class="text-gray-medium text-sm">照明设备制造商</p>
+                    </div>
+                    <p class="text-gray-dark relative z-10">
+                        "PinSai的导热硅脂帮助我们的LED照明产品提升了散热效率，
+                        延长了产品使用寿命，同时他们提供的定制化解决方案也满足了
+                        我们不同产品线的特殊需求。"
+                    </p>
+                    <div class="mt-6 flex items-center">
+                        <img src="https://picsum.photos/id/1027/100/100" alt="客户代表" class="w-12 h-12 rounded-full object-cover mr-4">
+                        <div>
+                            <p class="font-medium text-gray-dark">王静</p>
+                            <p class="text-gray-medium text-sm">产品开发经理</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 合作客户标志 -->
+            <div class="mt-20">
+                <h3 class="text-xl font-semibold text-primary mb-8 text-center">合作客户</h3>
+                <div class="flex flex-wrap justify-center items-center gap-8 md:gap-16">
+                    <img src="https://picsum.photos/id/4/200/80" alt="客户标志" class="h-8 w-auto grayscale hover:grayscale-0 transition-all opacity-70 hover:opacity-100">
+                    <img src="https://picsum.photos/id/5/200/80" alt="客户标志" class="h-8 w-auto grayscale hover:grayscale-0 transition-all opacity-70 hover:opacity-100">
+                    <img src="https://picsum.photos/id/6/200/80" alt="客户标志" class="h-8 w-auto grayscale hover:grayscale-0 transition-all opacity-70 hover:opacity-100">
+                    <img src="https://picsum.photos/id/7/200/80" alt="客户标志" class="h-8 w-auto grayscale hover:grayscale-0 transition-all opacity-70 hover:opacity-100">
+                    <img src="https://picsum.photos/id/8/200/80" alt="客户标志" class="h-8 w-auto grayscale hover:grayscale-0 transition-all opacity-70 hover:opacity-100">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 新闻资讯板块 -->
+    <section class="py-20 bg-gray-light">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold text-primary mb-4">
+                    新闻资讯
+                </h2>
+                <p class="text-gray-medium max-w-2xl mx-auto text-lg">
+                    了解行业动态、公司新闻和产品更新，获取最新的导热材料技术资讯。
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8" id="news-grid">
+                <!-- 数据将从site-data文件动态加载 -->
+            </div>
+            
+            <!-- 查看更多按钮 -->
+            <div class="text-center mt-12">
+                <a href="#" class="inline-block bg-white border border-primary text-primary hover:bg-primary hover:text-white font-medium py-3 px-8 rounded-lg transition-all">
+                    查看更多资讯
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 联系表单和联系方式 -->
+    <section id="contact" class="py-20 bg-white">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold text-primary mb-4">
+                    联系我们
+                </h2>
+                <p class="text-gray-medium max-w-2xl mx-auto text-lg">
+                    无论您有任何疑问或需求，我们的专业团队都将为您提供及时、专业的服务。
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                <!-- 联系方式 -->
+                <div class="lg:col-span-2 bg-gray-light p-8 rounded-xl">
+                    <h3 class="text-2xl font-semibold text-primary mb-6">联系方式</h3>
+                    
+                    <div class="space-y-6">
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mr-4 text-primary text-xl flex-shrink-0">
+                                <i class="fa fa-map-marker"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-dark mb-1">公司地址</h4>
+                                <p class="text-gray-medium">广东省深圳市宝安区西乡街道科技园A栋10楼</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mr-4 text-primary text-xl flex-shrink-0">
+                                <i class="fa fa-phone"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-dark mb-1">联系电话</h4>
+                                <p class="text-gray-medium">0755-12345678</p>
+                                <p class="text-gray-medium">400-888-9999</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mr-4 text-primary text-xl flex-shrink-0">
+                                <i class="fa fa-envelope-o"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-dark mb-1">电子邮箱</h4>
+                                <p class="text-gray-medium">info@PinSai.com</p>
+                                <p class="text-gray-medium">sales@PinSai.com</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mr-4 text-primary text-xl flex-shrink-0">
+                                <i class="fa fa-clock-o"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-dark mb-1">工作时间</h4>
+                                <p class="text-gray-medium">周一至周五: 9:00 - 18:00</p>
+                                <p class="text-gray-medium">周六至周日: 休息</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8">
+                        <h4 class="font-semibold text-gray-dark mb-4">关注我们</h4>
+                        <div class="flex space-x-4">
+                            <a href="#" class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center hover:bg-accent transition-colors">
+                                <i class="fa fa-weixin"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center hover:bg-accent transition-colors">
+                                <i class="fa fa-weibo"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center hover:bg-accent transition-colors">
+                                <i class="fa fa-linkedin"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center hover:bg-accent transition-colors">
+                                <i class="fa fa-youtube-play"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 联系表单 -->
+                <div class="lg:col-span-3 bg-primary rounded-xl p-8 text-white">
+                    <h3 class="text-2xl font-semibold mb-6">发送咨询</h3>
+                    <form>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div>
+                                <label for="name" class="block text-sm font-medium mb-2">姓名</label>
+                                <input type="text" id="name" class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 focus:border-accent focus:outline-none text-white placeholder-white/50" placeholder="请输入您的姓名">
+                            </div>
+                            <div>
+                                <label for="phone" class="block text-sm font-medium mb-2">电话</label>
+                                <input type="tel" id="phone" class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 focus:border-accent focus:outline-none text-white placeholder-white/50" placeholder="请输入您的联系电话">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label for="email" class="block text-sm font-medium mb-2">电子邮箱</label>
+                            <input type="email" id="email" class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 focus:border-accent focus:outline-none text-white placeholder-white/50" placeholder="请输入您的电子邮箱">
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label for="subject" class="block text-sm font-medium mb-2">咨询主题</label>
+                            <select id="subject" class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 focus:border-accent focus:outline-none text-white">
+                                <option value="" class="bg-primary">请选择咨询主题</option>
+                                <option value="product" class="bg-primary">产品咨询</option>
+                                <option value="price" class="bg-primary">价格咨询</option>
+                                <option value="sample" class="bg-primary">样品申请</option>
+                                <option value="cooperation" class="bg-primary">合作洽谈</option>
+                                <option value="other" class="bg-primary">其他问题</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label for="message" class="block text-sm font-medium mb-2">咨询内容</label>
+                            <textarea id="message" rows="5" class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 focus:border-accent focus:outline-none text-white placeholder-white/50" placeholder="请详细描述您的需求或问题"></textarea>
+                        </div>
+                        
+                        <div class="flex items-center mb-6">
+                            <input type="checkbox" id="agreement" class="w-4 h-4 text-accent focus:ring-accent border-white/30 rounded">
+                            <label for="agreement" class="ml-2 text-sm text-white/80">
+                                我同意贵公司根据隐私政策处理我的个人信息
+                            </label>
+                        </div>
+                        
+                        <button type="submit" class="w-full bg-accent hover:bg-accent/90 text-white font-medium py-3 px-6 rounded-lg transition-all transform hover:scale-[1.02]">
+                            提交咨询
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white pt-16 pb-8">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+                <!-- 公司简介 -->
+                <div>
+                    <div class="flex items-center space-x-2 mb-6">
+                        <div class="w-10 h-10 bg-accent rounded-lg flex items-center justify-center">
+                            <i class="fa fa-fire text-white text-xl"></i>
+                        </div>
+                        <span class="text-2xl font-bold">PinSai</span>
+                    </div>
+                    <p class="text-gray-400 mb-6">
+                        15年专注导热材料研发与生产，国家高新技术企业，
+                        为全球客户提供高品质的导热解决方案。
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-accent transition-colors">
+                            <i class="fa fa-weixin text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-accent transition-colors">
+                            <i class="fa fa-weibo text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-accent transition-colors">
+                            <i class="fa fa-linkedin text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-accent transition-colors">
+                            <i class="fa fa-youtube-play text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- 快速链接 -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-6">快速链接</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#home" class="text-gray-400 hover:text-accent transition-colors">首页</a></li>
+                        <li><a href="#products" class="text-gray-400 hover:text-accent transition-colors">产品中心</a></li>
+                        <li><a href="#technology" class="text-gray-400 hover:text-accent transition-colors">技术优势</a></li>
+                        <li><a href="#applications" class="text-gray-400 hover:text-accent transition-colors">应用领域</a></li>
+                        <li><a href="#company" class="text-gray-400 hover:text-accent transition-colors">关于我们</a></li>
+                        <li><a href="#contact" class="text-gray-400 hover:text-accent transition-colors">联系我们</a></li>
+                    </ul>
+                </div>
+                
+                <!-- 产品系列 -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-6">产品系列</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-400 hover:text-accent transition-colors">高导热型硅脂</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-accent transition-colors">耐高温型硅脂</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-accent transition-colors">绝缘型导热硅脂</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-accent transition-colors">电子专用硅脂</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-accent transition-colors">导电导热硅脂</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-accent transition-colors">定制化解决方案</a></li>
+                    </ul>
+                </div>
+                
+                <!-- 联系信息 -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-6">联系信息</h4>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <i class="fa fa-map-marker text-accent mt-1 mr-3"></i>
+                            <span class="text-gray-400">广东省深圳市宝安区西乡街道科技园A栋10楼</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-phone text-accent mt-1 mr-3"></i>
+                            <span class="text-gray-400">0755-12345678<br>400-888-9999</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-envelope-o text-accent mt-1 mr-3"></i>
+                            <span class="text-gray-400">info@PinSai.com<br>sales@PinSai.com</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <hr class="border-gray-800 mb-8">
+            
+            <!-- 版权信息 -->
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-500 text-sm mb-4 md:mb-0">
+                    &copy; 2023 PinSai导热硅脂. 保留所有权利.
+                </p>
+                <div class="flex space-x-6">
+                    <a href="#" class="text-gray-500 hover:text-gray-400 text-sm">隐私政策</a>
+                    <a href="#" class="text-gray-500 hover:text-gray-400 text-sm">使用条款</a>
+                    <a href="#" class="text-gray-500 hover:text-gray-400 text-sm">网站地图</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 返回顶部按钮 -->
+    <button id="back-to-top" class="fixed bottom-8 right-8 w-12 h-12 bg-accent text-white rounded-full flex items-center justify-center shadow-lg opacity-0 invisible transition-all z-50 hover:bg-accent/90">
+        <i class="fa fa-chevron-up"></i>
+    </button>
+
+    <script>
+        // 导航栏滚动效果
+        const navbar = document.getElementById('navbar');
+        const backToTop = document.getElementById('back-to-top');
+        
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 50) {
+                navbar.classList.add('bg-dark/95', 'backdrop-blur-md', 'shadow-lg');
+                navbar.classList.remove('bg-transparent');
+                
+                backToTop.classList.remove('opacity-0', 'invisible');
+                backToTop.classList.add('opacity-100', 'visible');
+            } else {
+                navbar.classList.remove('bg-dark/95', 'backdrop-blur-md', 'shadow-lg');
+                navbar.classList.add('bg-transparent');
+                
+                backToTop.classList.add('opacity-0', 'invisible');
+                backToTop.classList.remove('opacity-100', 'visible');
+            }
+        });
+        
+        // 移动端菜单切换
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        menuToggle.addEventListener('click', function() {
+            mobileMenu.classList.toggle('hidden');
+            const icon = menuToggle.querySelector('i');
+            if (mobileMenu.classList.contains('hidden')) {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            } else {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            }
+        });
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                // 关闭移动菜单（如果打开）
+                if (!mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.add('hidden');
+                    const icon = menuToggle.querySelector('i');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // 返回顶部按钮
+        backToTop.addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // 产品筛选功能
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const productCards = document.querySelectorAll('.product-card');
+        
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // 更新按钮状态
+                filterButtons.forEach(btn => {
+                    btn.classList.remove('active', 'bg-primary', 'text-white');
+                    btn.classList.add('bg-gray-light', 'text-gray-dark');
+                });
+                this.classList.add('active', 'bg-primary', 'text-white');
+                this.classList.remove('bg-gray-light', 'text-gray-dark');
+                
+                const filter = this.getAttribute('data-filter');
+                
+                // 筛选产品
+                productCards.forEach(card => {
+                    if (filter === 'all' || card.getAttribute('data-category') === filter) {
+                        card.style.display = 'block';
+                        // 添加动画效果
+                        setTimeout(() => {
+                            card.style.opacity = '1';
+                            card.style.transform = 'scale(1)';
+                        }, 50);
+                    } else {
+                        card.style.opacity = '0';
+                        card.style.transform = 'scale(0.8)';
+                        setTimeout(() => {
+                            card.style.display = 'none';
+                        }, 300);
+                    }
+                });
+            });
+        });
+        
+        // 初始化产品卡片样式
+        productCards.forEach(card => {
+            card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+        });
+        
+        // 导热性能对比图表
+        const ctx = document.getElementById('thermalPerformanceChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['HC-900', 'HC-700', 'HC-500HT', 'HC-300I', '行业平均'],
+                datasets: [{
+                    label: '导热系数 (W/m·K)',
+                    data: [8.5, 6.8, 4.2, 3.5, 2.8],
+                    backgroundColor: [
+                        '#E94560',
+                        '#0F3460',
+                        '#1A3A5F',
+                        '#16213E',
+                        '#666666'
+                    ],
+                    borderWidth: 0,
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+        
+        // 滚动动画
+        const animateOnScroll = function() {
+            const elements = document.querySelectorAll('.bg-white, .bg-gray-light');
+            
+            elements.forEach(element => {
+                const elementPosition = element.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
+                
+                if (elementPosition < windowHeight - 100) {
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }
+            });
+        };
+        
+        // 初始化元素样式
+        document.querySelectorAll('.bg-white, .bg-gray-light').forEach(element => {
+            element.style.opacity = '0';
+            element.style.transform = 'translateY(20px)';
+            element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        });
+        
+        // 初始加载和滚动时触发动画
+        window.addEventListener('load', async function() {
+            await loadDataFromFile();
+            animateOnScroll();
+        });
+        window.addEventListener('scroll', animateOnScroll);
+    </script>
+    
+    <!-- 引入测试脚本 -->
+    <script src="test-data-functionality.js" type="module"></script>
+</body>
+</html>
