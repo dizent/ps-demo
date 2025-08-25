@@ -341,7 +341,7 @@ window.saveDataToFile = async function saveDataToFile(data) {
         const dataStr = JSON.stringify(data, null, 2);
         
         // 创建Blob对象
-        const dataBlob = new Blob([dataStr], { type: 'application/json' });
+        const dataBlob = new Blob([dataStr], { type: 'text/plain' });
         
         // 创建临时URL
         const url = URL.createObjectURL(dataBlob);
@@ -349,7 +349,8 @@ window.saveDataToFile = async function saveDataToFile(data) {
         // 创建下载链接
         const link = document.createElement('a');
         link.href = url;
-        link.download = 'site-data'; // 设置下载的文件名
+        // 使用特殊命名方式尝试避免添加后缀
+        link.download = 'site-data.'; // 注意末尾的点号
         
         // 模拟点击下载链接
         document.body.appendChild(link);
@@ -360,7 +361,7 @@ window.saveDataToFile = async function saveDataToFile(data) {
         URL.revokeObjectURL(url);
         
         // 提示用户将下载的文件替换现有文件
-        alert('数据已下载为"site-data"文件。请将此文件替换到网站根目录以更新数据。');
+        alert('数据已下载。请注意：\n1. 如果下载的文件名带有后缀（如.txt），请手动删除后缀\n2. 确保最终文件名为"site-data"（无任何扩展名）\n3. 将文件替换到网站根目录以更新数据');
         
         return { success: true };
         

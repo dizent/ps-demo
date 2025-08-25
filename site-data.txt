@@ -1,17 +1,11 @@
 {
   "siteTitle": "PinSai 导热材料有限公司",
   "companyName": "PinSai 导热材料有限公司",
-  "companyDescription": "PinSai成立于2008年，是一家专注于导热材料研发、生产和销售的高新技术企业，15年来始终坚持以技术创新为核心，以产品质量为生命。",
-  "detailedCompanyDescription": [
-    "PinSai成立于2018年，是一家专注于导热材料研发、生产和销售的高新技术企业。15年来，我们始终坚持以技术创新为核心，以产品质量为生命，为全球客户提供高性能的导热硅脂产品和解决方案。",
-    "公司拥有现代化的生产基地和先进的研发中心，通过了ISO9001质量管理体系认证、ISO14001环境管理体系认证，产品符合RoHS、REACH等国际环保标准。",
-    "不过，我们的产品也广泛应用于电子、汽车、LED照明、工业机械等领域，与众多世界500强企业建立了长期稳定的合作关系。"
-  ],
-  "footerDescription": "15年专注导热材料研发与生产，国家高新技术企业，为全球客户提供高品质的导热解决方案。",
-  "companyAddress": "广东省深圳市南山区科技园南区18栋",
+  "companyDescription": "PinSai成立于2018年，是一家专注于导热材料研发、生产和销售的高新技术企业，15年来始终坚持以技术创新为核心，以产品质量为生命。",
+  "companyAddress": "广东省深圳市南山区科技园南区8栋",
   "companyPhone": "400-800-8888",
   "companyEmail": "info@pinsai-tech.com",
-  "workHours": "周一至周五 9:00-18:00",
+  "workHours": "",
   "wechatQrCode": "",
   "wechatLink": "#",
   "weiboLink": "#",
@@ -23,37 +17,37 @@
   "products": [
     {
       "name": "HC-900 高导热硅脂",
-      "thermal": "高导热型",
+      "thermal": "undefined",
       "description": "超高导热性能，适用于高热流密度场景",
       "image": "https://picsum.photos/id/119/600/400"
     },
     {
       "name": "HC-700 高导热硅脂",
-      "thermal": "高导热型",
+      "thermal": "undefined",
       "description": "高效导热，适用于多种电子设备散热需求",
       "image": "https://picsum.photos/id/177/600/400"
     },
     {
       "name": "HC-500HT 耐高温硅脂",
-      "thermal": "耐高温型",
+      "thermal": "undefined",
       "description": "耐高温性能优异，适用于高温环境下的电子设备",
       "image": "https://picsum.photos/id/180/600/400"
     },
     {
       "name": "HC-400I 绝缘型硅脂",
-      "thermal": "绝缘型",
+      "thermal": "undefined",
       "description": "优异的绝缘性能，适用于需要电气隔离的场景",
       "image": "https://picsum.photos/id/160/600/400"
     },
     {
       "name": "HC-600S 特殊应用硅脂",
-      "thermal": "特殊应用",
+      "thermal": "undefined",
       "description": "低挥发、长寿命，适用于密封环境和长寿命要求的场景",
       "image": "https://picsum.photos/id/169/600/400"
     },
     {
       "name": "HC-300C 导电型硅脂",
-      "thermal": "特殊应用",
+      "thermal": "undefined",
       "description": "具有导电性的导热硅脂，适用于需要同时导热和导电的场景",
       "image": "https://picsum.photos/id/116/600/400"
     }
@@ -64,21 +58,21 @@
       "date": "2023-06-15",
       "category": "产品发布",
       "image": "https://picsum.photos/id/119/600/400",
-      "summary": "PinSai今日宣布推出其最新研发的HC-900高导热硅脂产品，该产品采用创新配方，导热系数高达8.5 W/m·K，为电子设备提供卓越的散热解决方案。"
+      "summary": "undefined"
     },
     {
       "title": "PinSai新生产基地正式投产，年产能提升至1000吨",
       "date": "2023-05-28",
       "category": "公司新闻",
       "image": "https://picsum.photos/id/180/600/400",
-      "summary": "PinSai位于深圳的新生产基地正式投入运营，该基地采用先进的自动化生产线，将使公司年产能提升至1000吨，以满足日益增长的市场需求。"
+      "summary": "undefined"
     },
     {
       "title": "2023年电子导热材料行业发展趋势分析",
       "date": "2023-04-12",
       "category": "行业动态",
       "image": "https://picsum.photos/id/160/600/400",
-      "summary": "随着5G、新能源汽车等新兴领域的快速发展，电子导热材料市场迎来前所未有的发展机遇。本文分析了2023年行业发展的主要趋势和挑战。"
+      "summary": "undefined"
     }
   ]
 }

@@ -67,7 +67,9 @@
          */
         async function loadDataFromFile() {
             try {
-                const response = await fetch('site-data');
+                // 添加时间戳参数，确保每次都获取最新文件，避免浏览器缓存
+                const timestamp = new Date().getTime();
+                const response = await fetch(`site-data?timestamp=${timestamp}`);
                 if (response.ok) {
                     const data = await response.json();
                     // 将文件数据更新到页面
@@ -120,7 +122,24 @@
             
             // 更新公司简介
             if (data.companyDescription) {
-                document.querySelectorAll('.company-description').forEach(el => {
+                // 先检查是否有专门的页脚描述
+                if (data.footerDescription && document.querySelector('footer .company-description')) {
+                    document.querySelector('footer .company-description').textContent = data.footerDescription;
+                }
+                
+                // 处理关于我们部分的详细描述
+                if (data.detailedCompanyDescription && Array.isArray(data.detailedCompanyDescription)) {
+                    const aboutCompanyDescriptions = document.querySelectorAll('#company .company-description');
+                    aboutCompanyDescriptions.forEach((el, index) => {
+                        if (index < data.detailedCompanyDescription.length) {
+                            el.textContent = data.detailedCompanyDescription[index];
+                        }
+                    });
+                }
+                
+                // 对于其他位置的描述，使用默认描述
+                const otherDescriptions = document.querySelectorAll('.company-description:not(#company .company-description):not(footer .company-description)');
+                otherDescriptions.forEach(el => {
                     el.textContent = data.companyDescription;
                 });
             }
@@ -750,16 +769,16 @@
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                     <div>
                         <h3 class="text-2xl font-semibold text-primary mb-6">企业简介</h3>
-                        <p class="text-gray-medium mb-4">
+                        <p class="text-gray-medium mb-4 company-description">
                             PinSai成立于2008年，是一家专注于导热材料研发、生产和销售的高新技术企业。
                             15年来，我们始终坚持以技术创新为核心，以产品质量为生命，为全球客户提供
                             高性能的导热硅脂产品和解决方案。
                         </p>
-                        <p class="text-gray-medium mb-4">
+                        <p class="text-gray-medium mb-4 company-description">
                             公司拥有现代化的生产基地和先进的研发中心，通过了ISO9001质量管理体系认证、
                             ISO14001环境管理体系认证，产品符合RoHS、REACH等国际环保标准。
                         </p>
-                        <p class="text-gray-medium">
+                        <p class="text-gray-medium company-description">
                             我们的产品广泛应用于电子、汽车、LED照明、工业机械等领域，
                             与众多世界500强企业建立了长期稳定的合作关系。
                         </p>
@@ -1105,7 +1124,7 @@
                             </div>
                             <div>
                                 <h4 class="font-semibold text-gray-dark mb-1">公司地址</h4>
-                                <p class="text-gray-medium">广东省深圳市宝安区西乡街道科技园A栋10楼</p>
+                                <p class="text-gray-medium company-address">广东省深圳市宝安区西乡街道科技园A栋10楼</p>
                             </div>
                         </div>
                         
@@ -1115,8 +1134,8 @@
                             </div>
                             <div>
                                 <h4 class="font-semibold text-gray-dark mb-1">联系电话</h4>
-                                <p class="text-gray-medium">0755-12345678</p>
-                                <p class="text-gray-medium">400-888-9999</p>
+                                <p class="text-gray-medium company-phone">0755-12345678</p>
+                                <p class="text-gray-medium company-phone">400-888-9999</p>
                             </div>
                         </div>
                         
@@ -1126,8 +1145,8 @@
                             </div>
                             <div>
                                 <h4 class="font-semibold text-gray-dark mb-1">电子邮箱</h4>
-                                <p class="text-gray-medium">info@PinSai.com</p>
-                                <p class="text-gray-medium">sales@PinSai.com</p>
+                                <p class="text-gray-medium company-email">info@PinSai.com</p>
+                                <p class="text-gray-medium company-email">sales@PinSai.com</p>
                             </div>
                         </div>
                         
@@ -1137,8 +1156,8 @@
                             </div>
                             <div>
                                 <h4 class="font-semibold text-gray-dark mb-1">工作时间</h4>
-                                <p class="text-gray-medium">周一至周五: 9:00 - 18:00</p>
-                                <p class="text-gray-medium">周六至周日: 休息</p>
+                                <p class="text-gray-medium work-hours">周一至周五: 9:00 - 18:00</p>
+                                <p class="text-gray-medium work-hours">周六至周日: 休息</p>
                             </div>
                         </div>
                     </div>
@@ -1227,7 +1246,7 @@
                         </div>
                         <span class="text-2xl font-bold">PinSai</span>
                     </div>
-                    <p class="text-gray-400 mb-6">
+                    <p class="text-gray-400 mb-6 company-description">
                         15年专注导热材料研发与生产，国家高新技术企业，
                         为全球客户提供高品质的导热解决方案。
                     </p>
@@ -1279,15 +1298,15 @@
                     <ul class="space-y-4">
                         <li class="flex items-start">
                             <i class="fa fa-map-marker text-accent mt-1 mr-3"></i>
-                            <span class="text-gray-400">广东省深圳市宝安区西乡街道科技园A栋10楼</span>
+                            <span class="text-gray-400 company-address">广东省深圳市宝安区西乡街道科技园A栋10楼</span>
                         </li>
                         <li class="flex items-start">
                             <i class="fa fa-phone text-accent mt-1 mr-3"></i>
-                            <span class="text-gray-400">0755-12345678<br>400-888-9999</span>
+                            <span class="text-gray-400 company-phone">0755-12345678<br>400-888-9999</span>
                         </li>
                         <li class="flex items-start">
                             <i class="fa fa-envelope-o text-accent mt-1 mr-3"></i>
-                            <span class="text-gray-400">info@PinSai.com<br>sales@PinSai.com</span>
+                            <span class="text-gray-400 company-email">info@PinSai.com<br>sales@PinSai.com</span>
                         </li>
                     </ul>
                 </div>
