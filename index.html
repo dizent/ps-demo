@@ -146,36 +146,86 @@
             
             // 更新联系信息
             if (data.contactInfo) {
+                // 使用contactInfo对象
                 if (data.contactInfo.address) {
                     document.querySelectorAll('.company-address').forEach(el => {
                         el.textContent = data.contactInfo.address;
                     });
                 }
-                if (data.contactInfo.phone) {
-                    document.querySelectorAll('.company-phone').forEach(el => {
-                        el.textContent = data.contactInfo.phone;
-                    });
+                if (data.contactInfo.phone || data.contactInfo.phones) {
+                    // 检查是否有多电话号码
+                    const phones = Array.isArray(data.contactInfo.phones) ? data.contactInfo.phones : [data.contactInfo.phone];
+                    const phoneElements = document.querySelectorAll('.company-phone');
+                    
+                    if (phoneElements.length === 1) {
+                        // 如果只有一个元素，用换行符连接所有电话号码
+                        phoneElements[0].textContent = phones.filter(Boolean).join('\n');
+                    } else {
+                        // 如果有多个元素，分别填充
+                        phones.forEach((phone, index) => {
+                            if (index < phoneElements.length && phone) {
+                                phoneElements[index].textContent = phone;
+                            }
+                        });
+                    }
                 }
-                if (data.contactInfo.email) {
-                    document.querySelectorAll('.company-email').forEach(el => {
-                        el.textContent = data.contactInfo.email;
-                    });
+                if (data.contactInfo.email || data.contactInfo.emails) {
+                    // 检查是否有多邮箱
+                    const emails = Array.isArray(data.contactInfo.emails) ? data.contactInfo.emails : [data.contactInfo.email];
+                    const emailElements = document.querySelectorAll('.company-email');
+                    
+                    if (emailElements.length === 1) {
+                        // 如果只有一个元素，用换行符连接所有邮箱
+                        emailElements[0].textContent = emails.filter(Boolean).join('\n');
+                    } else {
+                        // 如果有多个元素，分别填充
+                        emails.forEach((email, index) => {
+                            if (index < emailElements.length && email) {
+                                emailElements[index].textContent = email;
+                            }
+                        });
+                    }
                 }
             } else {
+                // 直接使用顶层字段
                 if (data.companyAddress) {
                     document.querySelectorAll('.company-address').forEach(el => {
                         el.textContent = data.companyAddress;
                     });
                 }
-                if (data.companyPhone) {
-                    document.querySelectorAll('.company-phone').forEach(el => {
-                        el.textContent = data.companyPhone;
-                    });
+                if (data.companyPhone || data.companyPhones) {
+                    // 检查是否有多电话号码
+                    const phones = Array.isArray(data.companyPhones) ? data.companyPhones : [data.companyPhone];
+                    const phoneElements = document.querySelectorAll('.company-phone');
+                    
+                    if (phoneElements.length === 1) {
+                        // 如果只有一个元素，用换行符连接所有电话号码
+                        phoneElements[0].textContent = phones.filter(Boolean).join('\n');
+                    } else {
+                        // 如果有多个元素，分别填充
+                        phones.forEach((phone, index) => {
+                            if (index < phoneElements.length && phone) {
+                                phoneElements[index].textContent = phone;
+                            }
+                        });
+                    }
                 }
-                if (data.companyEmail) {
-                    document.querySelectorAll('.company-email').forEach(el => {
-                        el.textContent = data.companyEmail;
-                    });
+                if (data.companyEmail || data.companyEmails) {
+                    // 检查是否有多邮箱
+                    const emails = Array.isArray(data.companyEmails) ? data.companyEmails : [data.companyEmail];
+                    const emailElements = document.querySelectorAll('.company-email');
+                    
+                    if (emailElements.length === 1) {
+                        // 如果只有一个元素，用换行符连接所有邮箱
+                        emailElements[0].textContent = emails.filter(Boolean).join('\n');
+                    } else {
+                        // 如果有多个元素，分别填充
+                        emails.forEach((email, index) => {
+                            if (index < emailElements.length && email) {
+                                emailElements[index].textContent = email;
+                            }
+                        });
+                    }
                 }
             }
             
@@ -233,37 +283,35 @@
          * 更新产品信息
          */
         function updateProducts(products) {
-            // 获取产品容器
-            const productContainers = document.querySelectorAll('.products-container');
-            if (productContainers.length > 0) {
-                productContainers.forEach(container => {
-                    // 清空容器
-                    container.innerHTML = '';
+            // 获取产品容器 - 修复选择器，使用ID而不是类名
+            const productGrid = document.getElementById('products-grid');
+            if (productGrid) {
+                // 清空容器
+                productGrid.innerHTML = '';
+                
+                // 添加产品卡片
+                products.forEach(product => {
+                    const productCard = document.createElement('div');
+                    productCard.className = 'bg-white rounded-xl shadow-custom overflow-hidden hover:shadow-xl transition-shadow duration-300';
                     
-                    // 添加产品卡片
-                    products.forEach(product => {
-                        const productCard = document.createElement('div');
-                        productCard.className = 'bg-white rounded-xl shadow-custom overflow-hidden hover:shadow-xl transition-shadow duration-300';
-                        
-                        productCard.innerHTML = `
-                            <div class="relative overflow-hidden">
-                                <img src="${product.image}" alt="${product.name}" class="w-full h-64 object-cover transform hover:scale-105 transition-transform duration-500">
-                                <div class="absolute top-4 left-4 bg-accent text-white text-sm font-semibold px-3 py-1 rounded-full">
-                                    ${product.thermal}
-                                </div>
+                    productCard.innerHTML = `
+                        <div class="relative overflow-hidden">
+                            <img src="${product.image}" alt="${product.name}" class="w-full h-64 object-cover transform hover:scale-105 transition-transform duration-500">
+                            <div class="absolute top-4 left-4 bg-accent text-white text-sm font-semibold px-3 py-1 rounded-full">
+                                ${product.thermal}
                             </div>
-                            <div class="p-6">
-                                <h3 class="text-xl font-bold text-primary mb-3">${product.name}</h3>
-                                <p class="text-gray-medium mb-6">${product.description}</p>
-                                <a href="#" class="inline-flex items-center text-primary font-semibold hover:text-accent transition-colors">
-                                    查看详情
-                                    <i class="fa fa-arrow-right ml-2 transform hover:translate-x-1 transition-transform"></i>
-                                </a>
-                            </div>
-                        `;
-                        
-                        container.appendChild(productCard);
-                    });
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-primary mb-3">${product.name}</h3>
+                            <p class="text-gray-medium mb-6">${product.description}</p>
+                            <a href="#" class="inline-flex items-center text-primary font-semibold hover:text-accent transition-colors">
+                                查看详情
+                                <i class="fa fa-arrow-right ml-2 transform hover:translate-x-1 transition-transform"></i>
+                            </a>
+                        </div>
+                    `;
+                    
+                    productGrid.appendChild(productCard);
                 });
             }
         }
@@ -769,19 +817,9 @@
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                     <div>
                         <h3 class="text-2xl font-semibold text-primary mb-6">企业简介</h3>
-                        <p class="text-gray-medium mb-4 company-description">
-                            PinSai成立于2008年，是一家专注于导热材料研发、生产和销售的高新技术企业。
-                            15年来，我们始终坚持以技术创新为核心，以产品质量为生命，为全球客户提供
-                            高性能的导热硅脂产品和解决方案。
-                        </p>
-                        <p class="text-gray-medium mb-4 company-description">
-                            公司拥有现代化的生产基地和先进的研发中心，通过了ISO9001质量管理体系认证、
-                            ISO14001环境管理体系认证，产品符合RoHS、REACH等国际环保标准。
-                        </p>
-                        <p class="text-gray-medium company-description">
-                            我们的产品广泛应用于电子、汽车、LED照明、工业机械等领域，
-                            与众多世界500强企业建立了长期稳定的合作关系。
-                        </p>
+                        <p class="text-gray-medium mb-4 company-description"></p>
+                        <p class="text-gray-medium mb-4 company-description"></p>
+                        <p class="text-gray-medium company-description"></p>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <img src="https://picsum.photos/id/180/600/400" alt="公司工厂" class="rounded-lg shadow-sm hover:shadow-md transition-all transform hover:-translate-y-1">
@@ -1124,7 +1162,7 @@
                             </div>
                             <div>
                                 <h4 class="font-semibold text-gray-dark mb-1">公司地址</h4>
-                                <p class="text-gray-medium company-address">广东省深圳市宝安区西乡街道科技园A栋10楼</p>
+                                <p class="text-gray-medium company-address"></p>
                             </div>
                         </div>
                         
@@ -1134,8 +1172,7 @@
                             </div>
                             <div>
                                 <h4 class="font-semibold text-gray-dark mb-1">联系电话</h4>
-                                <p class="text-gray-medium company-phone">0755-12345678</p>
-                                <p class="text-gray-medium company-phone">400-888-9999</p>
+                                <p class="text-gray-medium company-phone"></p>
                             </div>
                         </div>
                         
@@ -1145,8 +1182,7 @@
                             </div>
                             <div>
                                 <h4 class="font-semibold text-gray-dark mb-1">电子邮箱</h4>
-                                <p class="text-gray-medium company-email">info@PinSai.com</p>
-                                <p class="text-gray-medium company-email">sales@PinSai.com</p>
+                                <p class="text-gray-medium company-email"></p>
                             </div>
                         </div>
                         
@@ -1156,8 +1192,7 @@
                             </div>
                             <div>
                                 <h4 class="font-semibold text-gray-dark mb-1">工作时间</h4>
-                                <p class="text-gray-medium work-hours">周一至周五: 9:00 - 18:00</p>
-                                <p class="text-gray-medium work-hours">周六至周日: 休息</p>
+                                <p class="text-gray-medium work-hours"></p>
                             </div>
                         </div>
                     </div>
@@ -1246,10 +1281,7 @@
                         </div>
                         <span class="text-2xl font-bold">PinSai</span>
                     </div>
-                    <p class="text-gray-400 mb-6 company-description">
-                        15年专注导热材料研发与生产，国家高新技术企业，
-                        为全球客户提供高品质的导热解决方案。
-                    </p>
+                    <p class="text-gray-400 mb-6 company-description"></p>
                     <div class="flex space-x-4">
                         <a href="#" class="text-gray-400 hover:text-accent transition-colors">
                             <i class="fa fa-weixin text-xl"></i>
@@ -1298,15 +1330,15 @@
                     <ul class="space-y-4">
                         <li class="flex items-start">
                             <i class="fa fa-map-marker text-accent mt-1 mr-3"></i>
-                            <span class="text-gray-400 company-address">广东省深圳市宝安区西乡街道科技园A栋10楼</span>
+                            <span class="text-gray-400 company-address"></span>
                         </li>
                         <li class="flex items-start">
                             <i class="fa fa-phone text-accent mt-1 mr-3"></i>
-                            <span class="text-gray-400 company-phone">0755-12345678<br>400-888-9999</span>
+                            <span class="text-gray-400 company-phone"></span>
                         </li>
                         <li class="flex items-start">
                             <i class="fa fa-envelope-o text-accent mt-1 mr-3"></i>
-                            <span class="text-gray-400 company-email">info@PinSai.com<br>sales@PinSai.com</span>
+                            <span class="text-gray-400 company-email"></span>
                         </li>
                     </ul>
                 </div>
