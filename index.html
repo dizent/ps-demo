@@ -57,6 +57,20 @@
                 -ms-overflow-style: none;
                 scrollbar-width: none;
             }
+            
+            /* 图片淡入动画 */
+            .fade-in {
+                animation: fadeIn 0.5s ease-in-out forwards;
+            }
+            
+            @keyframes fadeIn {
+                from {
+                    opacity: 0.5;
+                }
+                to {
+                    opacity: 1;
+                }
+            }
         }
     </style>
     
@@ -101,6 +115,67 @@
                 } catch (e) {
                     console.error('解析保存的数据失败:', e);
                 }
+            }
+        }
+
+        /**
+         * 获取图片的低质量占位图URL
+         */
+        function getPlaceholderImageUrl(originalUrl, width = 20, height = 20) {
+            // 从原始URL提取图片ID
+            const match = originalUrl.match(/id\/(\d+)\//);
+            const imageId = match ? match[1] : '1';
+            // 返回低质量占位图URL
+            return `https://picsum.photos/id/${imageId}/${width}/${height}?blur=4`;
+        }
+
+        /**
+         * 初始化图片懒加载
+         */
+        function initLazyLoading() {
+            // 检查浏览器是否支持IntersectionObserver
+            if ('IntersectionObserver' in window) {
+                const imageObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const img = entry.target;
+                            const src = img.getAttribute('data-src');
+                            
+                            // 只有在有data-src属性时才替换
+                            if (src) {
+                                // 创建新的图片对象来预加载
+                                const tempImg = new Image();
+                                tempImg.onload = function() {
+                                    img.src = src;
+                                    img.classList.add('fade-in');
+                                    img.removeAttribute('data-src');
+                                    imageObserver.unobserve(img);
+                                };
+                                tempImg.onerror = function() {
+                                    // 加载失败时显示占位图
+                                    img.classList.add('fade-in');
+                                    imageObserver.unobserve(img);
+                                };
+                                tempImg.src = src;
+                            }
+                        }
+                    });
+                }, {
+                    rootMargin: '200px 0px', // 提前200px触发加载
+                    threshold: 0.1
+                });
+
+                // 观察所有带data-src属性的图片
+                document.querySelectorAll('img[data-src]').forEach(img => {
+                    imageObserver.observe(img);
+                });
+            } else {
+                // 降级方案：在不支持IntersectionObserver的浏览器中立即加载所有图片
+                document.querySelectorAll('img[data-src]').forEach(img => {
+                    img.src = img.getAttribute('data-src');
+                    img.removeAttribute('data-src');
+                    img.classList.add('fade-in');
+                });
             }
         }
 
@@ -292,11 +367,31 @@
                 // 添加产品卡片
                 products.forEach(product => {
                     const productCard = document.createElement('div');
-                    productCard.className = 'bg-white rounded-xl shadow-custom overflow-hidden hover:shadow-xl transition-shadow duration-300';
+                    // 添加product-card类名和data-category属性
+                    productCard.className = 'product-card bg-white rounded-xl shadow-custom overflow-hidden hover:shadow-xl transition-shadow duration-300';
+                    // 根据导热性能设置类别
+                    let category = 'special'; // 默认类别
+                    if (product.thermal.includes('高导热')) {
+                        category = 'high-thermal';
+                    } else if (product.thermal.includes('耐高温')) {
+                        category = 'high-temp';
+                    } else if (product.thermal.includes('绝缘')) {
+                        category = 'insulating';
+                    }
+                    productCard.setAttribute('data-category', category);
                     
-                    productCard.innerHTML = `
+                    // 获取占位图URL
+                        const placeholderUrl = getPlaceholderImageUrl(product.image, 60, 40);
+                        
+                        productCard.innerHTML = `
                         <div class="relative overflow-hidden">
-                            <img src="${product.image}" alt="${product.name}" class="w-full h-64 object-cover transform hover:scale-105 transition-transform duration-500">
+                            <img 
+                                src="${placeholderUrl}" 
+                                data-src="${product.image}" 
+                                alt="${product.name}" 
+                                class="w-full h-64 object-cover transform hover:scale-105 transition-transform duration-500 opacity-90"
+                                loading="lazy"
+                            >
                             <div class="absolute top-4 left-4 bg-accent text-white text-sm font-semibold px-3 py-1 rounded-full">
                                 ${product.thermal}
                             </div>
@@ -313,7 +408,65 @@
                     
                     productGrid.appendChild(productCard);
                 });
+                
+                // 初始化产品卡片样式
+                const productCards = document.querySelectorAll('.product-card');
+                productCards.forEach(card => {
+                    card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                });
+                
+                // 重新初始化筛选功能
+                initProductFiltering();
             }
+        }
+        
+        /**
+         * 初始化产品筛选功能
+         */
+        function initProductFiltering() {
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const productCards = document.querySelectorAll('.product-card');
+            
+            // 移除之前的事件监听器（避免重复绑定）
+            filterButtons.forEach(button => {
+                const newButton = button.cloneNode(true);
+                button.parentNode.replaceChild(newButton, button);
+            });
+            
+            // 重新获取按钮引用
+            const newFilterButtons = document.querySelectorAll('.filter-btn');
+            
+            newFilterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // 更新按钮状态
+                    newFilterButtons.forEach(btn => {
+                        btn.classList.remove('active', 'bg-primary', 'text-white');
+                        btn.classList.add('bg-gray-light', 'text-gray-dark');
+                    });
+                    this.classList.add('active', 'bg-primary', 'text-white');
+                    this.classList.remove('bg-gray-light', 'text-gray-dark');
+                    
+                    const filter = this.getAttribute('data-filter');
+                    
+                    // 筛选产品
+                    productCards.forEach(card => {
+                        if (filter === 'all' || card.getAttribute('data-category') === filter) {
+                            card.style.display = 'block';
+                            // 添加动画效果
+                            setTimeout(() => {
+                                card.style.opacity = '1';
+                                card.style.transform = 'scale(1)';
+                            }, 50);
+                        } else {
+                            card.style.opacity = '0';
+                            card.style.transform = 'scale(0.8)';
+                            setTimeout(() => {
+                                card.style.display = 'none';
+                            }, 300);
+                        }
+                    });
+                });
+            });
         }
         
         /**
@@ -333,9 +486,18 @@
                         const newsCard = document.createElement('div');
                         newsCard.className = 'bg-white rounded-xl shadow-custom overflow-hidden hover:shadow-xl transition-shadow duration-300';
                         
+                        // 获取占位图URL
+                        const placeholderUrl = getPlaceholderImageUrl(newsItem.image, 60, 40);
+                        
                         newsCard.innerHTML = `
                             <div class="relative overflow-hidden">
-                                <img src="${newsItem.image}" alt="${newsItem.title}" class="w-full h-48 object-cover transform hover:scale-105 transition-transform duration-500">
+                                <img 
+                                    src="${placeholderUrl}" 
+                                    data-src="${newsItem.image}" 
+                                    alt="${newsItem.title}" 
+                                    class="w-full h-48 object-cover transform hover:scale-105 transition-transform duration-500 opacity-90"
+                                    loading="lazy"
+                                >
                                 <div class="absolute top-4 left-4 ${categoryClass} text-white text-sm font-semibold px-3 py-1 rounded-full">
                                     ${newsItem.category}
                                 </div>
@@ -448,12 +610,19 @@
     <!-- 首页横幅 -->
     <section id="home" class="relative min-h-screen flex items-center bg-gradient-industrial overflow-hidden">
         <div class="absolute inset-0 z-0">
-            <div class="absolute inset-0 bg-primary/40"></div>
-            <img src="https://picsum.photos/id/180/1920/1080" alt="导热硅脂应用场景" class="w-full h-full object-cover opacity-40">
-            <!-- 装饰性几何图形 -->
-            <div class="absolute -top-20 -right-20 w-96 h-96 bg-accent/10 rounded-full blur-3xl"></div>
-            <div class="absolute top-1/3 -left-40 w-80 h-80 bg-secondary/20 rounded-full blur-3xl"></div>
-        </div>
+                <div class="absolute inset-0 bg-primary/40"></div>
+                <!-- 使用低质量占位图作为初始显示 -->
+                <img 
+                    src="https://picsum.photos/id/180/200/100?blur=4" 
+                    data-src="https://picsum.photos/id/180/1920/1080" 
+                    alt="导热硅脂应用场景" 
+                    class="w-full h-full object-cover opacity-40"
+                    loading="lazy"
+                >
+                <!-- 装饰性几何图形 -->
+                <div class="absolute -top-20 -right-20 w-96 h-96 bg-accent/10 rounded-full blur-3xl"></div>
+                <div class="absolute top-1/3 -left-40 w-80 h-80 bg-secondary/20 rounded-full blur-3xl"></div>
+            </div>
         
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-24">
             <div class="max-w-3xl">
@@ -1125,7 +1294,7 @@
                 </p>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8" id="news-grid">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 news-container" id="news-grid">
                 <!-- 数据将从site-data文件动态加载 -->
             </div>
             
@@ -1200,17 +1369,17 @@
                     <div class="mt-8">
                         <h4 class="font-semibold text-gray-dark mb-4">关注我们</h4>
                         <div class="flex space-x-4">
-                            <a href="#" class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center hover:bg-accent transition-colors">
-                                <i class="fa fa-weixin"></i>
+                            <a href="#" class="w-10 h-10 bg-[#07C160] text-white rounded-full flex items-center justify-center hover:opacity-90 transition-opacity" title="微信">
+                                <i class="fa fa-weixin text-xl"></i>
                             </a>
-                            <a href="#" class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center hover:bg-accent transition-colors">
-                                <i class="fa fa-weibo"></i>
+                            <a href="#" class="w-10 h-10 bg-[#FF4400] text-white rounded-full flex items-center justify-center hover:opacity-90 transition-opacity" title="淘宝店铺">
+                                <i class="fa fa-shopping-bag text-xl"></i>
                             </a>
-                            <a href="#" class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center hover:bg-accent transition-colors">
-                                <i class="fa fa-linkedin"></i>
+                            <a href="#" class="w-10 h-10 bg-[#E1251B] text-white rounded-full flex items-center justify-center hover:opacity-90 transition-opacity" title="京东店铺">
+                                <i class="fa fa-shopping-cart text-xl"></i>
                             </a>
-                            <a href="#" class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center hover:bg-accent transition-colors">
-                                <i class="fa fa-youtube-play"></i>
+                            <a href="#" class="w-10 h-10 bg-[#E02E24] text-white rounded-full flex items-center justify-center hover:opacity-90 transition-opacity" title="拼多多店铺">
+                                <i class="fa fa-commenting-o text-xl"></i>
                             </a>
                         </div>
                     </div>
@@ -1283,17 +1452,17 @@
                     </div>
                     <p class="text-gray-400 mb-6 company-description"></p>
                     <div class="flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-accent transition-colors">
+                        <a href="#" class="text-[#07C160] hover:opacity-80 transition-opacity" title="微信">
                             <i class="fa fa-weixin text-xl"></i>
                         </a>
-                        <a href="#" class="text-gray-400 hover:text-accent transition-colors">
-                            <i class="fa fa-weibo text-xl"></i>
+                        <a href="#" class="text-[#FF4400] hover:opacity-80 transition-opacity" title="淘宝店铺">
+                            <i class="fa fa-shopping-bag text-xl"></i>
                         </a>
-                        <a href="#" class="text-gray-400 hover:text-accent transition-colors">
-                            <i class="fa fa-linkedin text-xl"></i>
+                        <a href="#" class="text-[#E1251B] hover:opacity-80 transition-opacity" title="京东店铺">
+                            <i class="fa fa-shopping-cart text-xl"></i>
                         </a>
-                        <a href="#" class="text-gray-400 hover:text-accent transition-colors">
-                            <i class="fa fa-youtube-play text-xl"></i>
+                        <a href="#" class="text-[#E02E24] hover:opacity-80 transition-opacity" title="拼多多店铺">
+                            <i class="fa fa-commenting-o text-xl"></i>
                         </a>
                     </div>
                 </div>
@@ -1402,7 +1571,7 @@
             }
         });
         
-        // 平滑滚动
+        // 平滑滚动和产品筛选链接处理
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -1416,14 +1585,48 @@
                 }
                 
                 const targetId = this.getAttribute('href');
-                if (targetId === '#') return;
                 
-                const targetElement = document.querySelector(targetId);
-                if (targetElement) {
-                    window.scrollTo({
-                        top: targetElement.offsetTop - 80,
-                        behavior: 'smooth'
-                    });
+                // 处理产品筛选链接
+                if (targetId === '#' && this.textContent.includes('硅脂') && this.closest('footer')) {
+                    // 先滚动到产品中心
+                    const productsSection = document.getElementById('products');
+                    if (productsSection) {
+                        window.scrollTo({
+                            top: productsSection.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                    
+                    // 延迟执行筛选，确保页面滚动完成
+                    setTimeout(() => {
+                        // 根据链接文本确定筛选类型
+                        let filterType = 'special';
+                        if (this.textContent.includes('高导热')) {
+                            filterType = 'high-thermal';
+                        } else if (this.textContent.includes('耐高温')) {
+                            filterType = 'high-temp';
+                        } else if (this.textContent.includes('绝缘')) {
+                            filterType = 'insulating';
+                        }
+                        
+                        // 触发对应的筛选按钮点击
+                        const filterButton = document.querySelector(`.filter-btn[data-filter="${filterType}"]`);
+                        if (filterButton) {
+                            filterButton.click();
+                        }
+                    }, 800);
+                    return;
+                }
+                
+                // 普通锚点链接滚动
+                if (targetId !== '#') {
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
                 }
             });
         });
@@ -1436,46 +1639,19 @@
             });
         });
         
-        // 产品筛选功能
-        const filterButtons = document.querySelectorAll('.filter-btn');
-        const productCards = document.querySelectorAll('.product-card');
+        // 产品筛选功能已在updateProducts函数中通过initProductFiltering实现
+        // 初始化页面时调用一次筛选功能，确保按钮状态正确
+        const initPage = function() {
+            // 设置默认活动按钮样式
+            const activeFilterBtn = document.querySelector('.filter-btn.active');
+            if (activeFilterBtn) {
+                activeFilterBtn.classList.add('bg-primary', 'text-white');
+                activeFilterBtn.classList.remove('bg-gray-light', 'text-gray-dark');
+            }
+        };
         
-        filterButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                // 更新按钮状态
-                filterButtons.forEach(btn => {
-                    btn.classList.remove('active', 'bg-primary', 'text-white');
-                    btn.classList.add('bg-gray-light', 'text-gray-dark');
-                });
-                this.classList.add('active', 'bg-primary', 'text-white');
-                this.classList.remove('bg-gray-light', 'text-gray-dark');
-                
-                const filter = this.getAttribute('data-filter');
-                
-                // 筛选产品
-                productCards.forEach(card => {
-                    if (filter === 'all' || card.getAttribute('data-category') === filter) {
-                        card.style.display = 'block';
-                        // 添加动画效果
-                        setTimeout(() => {
-                            card.style.opacity = '1';
-                            card.style.transform = 'scale(1)';
-                        }, 50);
-                    } else {
-                        card.style.opacity = '0';
-                        card.style.transform = 'scale(0.8)';
-                        setTimeout(() => {
-                            card.style.display = 'none';
-                        }, 300);
-                    }
-                });
-            });
-        });
-        
-        // 初始化产品卡片样式
-        productCards.forEach(card => {
-            card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-        });
+        // 页面加载完成后执行初始化
+        document.addEventListener('DOMContentLoaded', initPage);
         
         // 导热性能对比图表
         const ctx = document.getElementById('thermalPerformanceChart').getContext('2d');
@@ -1547,11 +1723,12 @@
         window.addEventListener('load', async function() {
             await loadDataFromFile();
             animateOnScroll();
+            // 初始化图片懒加载
+            setTimeout(initLazyLoading, 300);
         });
         window.addEventListener('scroll', animateOnScroll);
     </script>
     
-    <!-- 引入测试脚本 -->
-    <script src="test-data-functionality.js" type="module"></script>
+
 </body>
 </html>
