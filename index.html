@@ -71,35 +71,93 @@
                     opacity: 1;
                 }
             }
+            
+            /* 骨架屏样式 */
+            .skeleton-loading {
+                position: relative;
+                overflow: hidden;
+                background-color: #e2e8f0;
+            }
+            
+            .skeleton-loading::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                left: 0;
+                transform: translateX(-100%);
+                background-image: linear-gradient(
+                    90deg,
+                    rgba(255, 255, 255, 0) 0,
+                    rgba(255, 255, 255, 0.2) 20%,
+                    rgba(255, 255, 255, 0.5) 60%,
+                    rgba(255, 255, 255, 0)
+                );
+                animation: shimmer 2s infinite;
+            }
+            
+            @keyframes shimmer {
+                100% {
+                    transform: translateX(100%);
+                }
+            }
+            
+            /* 确保产品卡片和新闻卡片的文本内容优先显示 */
+            .product-card h3,
+            .product-card p,
+            .news-card h3,
+            .news-card p {
+                opacity: 1 !important;
+                transform: none !important;
+            }
         }
     </style>
     
     <!-- 主页面数据同步脚本 -->
     <script>
         /**
-         * 从site-data文件加载数据
+         * 从site-data文件加载数据 - 非阻塞版本
          */
-        async function loadDataFromFile() {
-            try {
-                // 添加时间戳参数，确保每次都获取最新文件，避免浏览器缓存
-                const timestamp = new Date().getTime();
-                const response = await fetch(`site-data?timestamp=${timestamp}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    // 将文件数据更新到页面
-                    updatePageWithData(data);
-                    // 同时保存到localStorage作为备份
-                    localStorage.setItem('websiteData', JSON.stringify(data));
-                } else {
-                    console.error('无法加载数据文件:', response.statusText);
-                    // 如果文件加载失败，尝试从localStorage加载
+        function loadDataFromFile() {
+            return new Promise((resolve, reject) => {
+                try {
+                    // 添加时间戳参数，确保每次都获取最新文件，避免浏览器缓存
+                    const timestamp = new Date().getTime();
+                    fetch(`site-data?timestamp=${timestamp}`)
+                        .then(response => {
+                            if (response.ok) {
+                                return response.json();
+                            } else {
+                                console.error('无法加载数据文件:', response.statusText);
+                                // 如果文件加载失败，尝试从localStorage加载
+                                loadDataFromLocalStorage();
+                                reject(new Error('数据文件加载失败'));
+                                return null;
+                            }
+                        })
+                        .then(data => {
+                            if (data) {
+                                // 将文件数据更新到页面
+                                updatePageWithData(data);
+                                // 同时保存到localStorage作为备份
+                                localStorage.setItem('websiteData', JSON.stringify(data));
+                                resolve(data);
+                            }
+                        })
+                        .catch(e => {
+                            console.error('加载数据文件失败:', e);
+                            // 如果发生错误，尝试从localStorage加载
+                            loadDataFromLocalStorage();
+                            reject(e);
+                        });
+                } catch (e) {
+                    console.error('加载数据文件时发生异常:', e);
+                    // 如果发生错误，尝试从localStorage加载
                     loadDataFromLocalStorage();
+                    reject(e);
                 }
-            } catch (e) {
-                console.error('加载数据文件失败:', e);
-                // 如果发生错误，尝试从localStorage加载
-                loadDataFromLocalStorage();
-            }
+            });
         }
 
         /**
@@ -119,63 +177,130 @@
         }
 
         /**
-         * 获取图片的低质量占位图URL
+         * 获取图片的背景色
+         * 使用固定颜色或根据图片ID生成伪随机颜色
          */
-        function getPlaceholderImageUrl(originalUrl, width = 20, height = 20) {
-            // 从原始URL提取图片ID
-            const match = originalUrl.match(/id\/(\d+)\//);
-            const imageId = match ? match[1] : '1';
-            // 返回低质量占位图URL
-            return `https://picsum.photos/id/${imageId}/${width}/${height}?blur=4`;
+        function getImageBackgroundColor(imageId) {
+            // 根据图片ID选择颜色，保持一致性
+            const colors = [
+                '#f3f4f6', // 浅灰色
+                '#e5e7eb', // 中灰色
+                '#d1d5db', // 深灰色
+                '#f9fafb', // 非常浅的灰色
+                '#f0f2f5'  // 浅蓝灰色
+            ];
+            // 如果没有提供ID或解析失败，返回默认颜色
+            if (!imageId) return colors[0];
+            // 根据ID计算索引，确保相同图片使用相同背景色
+            const index = parseInt(imageId, 10) % colors.length;
+            return colors[index];
         }
 
         /**
          * 初始化图片懒加载
          */
         function initLazyLoading() {
+            // 存储所有需要加载的图片
+            let imagesToLoad = [];
+            
             // 检查浏览器是否支持IntersectionObserver
             if ('IntersectionObserver' in window) {
+                // 定义图片加载函数
+                const loadImage = (img) => {
+                    const src = img.getAttribute('data-src');
+                    
+                    if (!src) return;
+                    
+                    // 创建新的图片对象来预加载
+                    const tempImg = new Image();
+                    
+                    // 设置较低的优先级，不阻塞主内容
+                    tempImg.fetchPriority = 'low';
+                    
+                    tempImg.onload = function() {
+                        // 图片加载完成后，平滑显示
+                        img.src = src;
+                        img.style.transition = 'opacity 0.5s ease-in-out';
+                        img.style.opacity = '1';
+                        
+                        // 从待加载列表中移除
+                        const index = imagesToLoad.indexOf(img);
+                        if (index > -1) {
+                            imagesToLoad.splice(index, 1);
+                        }
+                    };
+                    
+                    tempImg.onerror = function() {
+                        // 加载失败时，可以选择不做任何处理，保持背景色显示
+                        const index = imagesToLoad.indexOf(img);
+                        if (index > -1) {
+                            imagesToLoad.splice(index, 1);
+                        }
+                    };
+                    
+                    tempImg.src = src;
+                };
+                
                 const imageObserver = new IntersectionObserver((entries, observer) => {
                     entries.forEach(entry => {
                         if (entry.isIntersecting) {
                             const img = entry.target;
-                            const src = img.getAttribute('data-src');
                             
-                            // 只有在有data-src属性时才替换
-                            if (src) {
-                                // 创建新的图片对象来预加载
-                                const tempImg = new Image();
-                                tempImg.onload = function() {
-                                    img.src = src;
-                                    img.classList.add('fade-in');
-                                    img.removeAttribute('data-src');
-                                    imageObserver.unobserve(img);
-                                };
-                                tempImg.onerror = function() {
-                                    // 加载失败时显示占位图
-                                    img.classList.add('fade-in');
-                                    imageObserver.unobserve(img);
-                                };
-                                tempImg.src = src;
-                            }
+                            // 将图片添加到待加载列表
+                            imagesToLoad.push(img);
+                            
+                            // 观察器停止观察这个图片
+                            observer.unobserve(img);
                         }
                     });
                 }, {
-                    rootMargin: '200px 0px', // 提前200px触发加载
-                    threshold: 0.1
+                    rootMargin: '300px 0px', // 提前300px触发观察
+                    threshold: 0.01
                 });
 
                 // 观察所有带data-src属性的图片
                 document.querySelectorAll('img[data-src]').forEach(img => {
                     imageObserver.observe(img);
                 });
+                
+                // 延迟批量加载图片，确保页面主要内容先加载完成
+                setTimeout(() => {
+                    // 按顺序加载图片，避免一次性发送太多请求
+                    const loadImagesSequentially = (index = 0) => {
+                        if (index >= imagesToLoad.length) {
+                            // 所有图片加载完成
+                            return;
+                        }
+                        
+                        const img = imagesToLoad[index];
+                        loadImage(img);
+                        
+                        // 每隔100ms加载下一张图片
+                        setTimeout(() => {
+                            loadImagesSequentially(index + 1);
+                        }, 100);
+                    };
+                    
+                    // 开始顺序加载图片
+                    loadImagesSequentially();
+                }, 800);
+                
             } else {
-                // 降级方案：在不支持IntersectionObserver的浏览器中立即加载所有图片
-                document.querySelectorAll('img[data-src]').forEach(img => {
-                    img.src = img.getAttribute('data-src');
-                    img.removeAttribute('data-src');
-                    img.classList.add('fade-in');
-                });
+                // 降级方案：在不支持IntersectionObserver的浏览器中
+                // 仍然先显示背景色，然后延迟加载图片
+                const images = document.querySelectorAll('img[data-src]');
+                
+                setTimeout(() => {
+                    images.forEach((img, index) => {
+                        // 延迟加载，避免一次性请求所有图片
+                        setTimeout(() => {
+                            img.src = img.getAttribute('data-src');
+                            img.style.transition = 'opacity 0.5s ease-in-out';
+                            img.style.opacity = '1';
+                            img.removeAttribute('data-src');
+                        }, index * 100);
+                    });
+                }, 800);
             }
         }
 
@@ -358,13 +483,13 @@
          * 更新产品信息
          */
         function updateProducts(products) {
-            // 获取产品容器 - 修复选择器，使用ID而不是类名
+            // 获取产品容器
             const productGrid = document.getElementById('products-grid');
             if (productGrid) {
-                // 清空容器
+                // 清空容器（但保留骨架屏结构的情况下，我们现在直接填充数据）
                 productGrid.innerHTML = '';
                 
-                // 添加产品卡片
+                // 立即创建并显示产品卡片，优先显示文本内容
                 products.forEach(product => {
                     const productCard = document.createElement('div');
                     // 添加product-card类名和data-category属性
@@ -380,16 +505,21 @@
                     }
                     productCard.setAttribute('data-category', category);
                     
-                    // 获取占位图URL
-                        const placeholderUrl = getPlaceholderImageUrl(product.image, 60, 40);
-                        
-                        productCard.innerHTML = `
+                    // 从图片URL提取ID
+                    const match = product.image.match(/id\/(\d+)\//);
+                    const imageId = match ? match[1] : '1';
+                    const bgColor = getImageBackgroundColor(imageId);
+                    
+                    // 先创建HTML结构，但确保文本内容优先显示
+                    productCard.innerHTML = `
                         <div class="relative overflow-hidden">
+                            <!-- 使用背景色占位 -->
+                            <div style="background-color: ${bgColor}; min-height: 256px;"></div>
                             <img 
-                                src="${placeholderUrl}" 
+                                src="" 
                                 data-src="${product.image}" 
                                 alt="${product.name}" 
-                                class="w-full h-64 object-cover transform hover:scale-105 transition-transform duration-500 opacity-90"
+                                class="absolute inset-0 w-full h-full object-cover transform hover:scale-105 transition-transform duration-500 opacity-0"
                                 loading="lazy"
                             >
                             <div class="absolute top-4 left-4 bg-accent text-white text-sm font-semibold px-3 py-1 rounded-full">
@@ -397,8 +527,8 @@
                             </div>
                         </div>
                         <div class="p-6">
-                            <h3 class="text-xl font-bold text-primary mb-3">${product.name}</h3>
-                            <p class="text-gray-medium mb-6">${product.description}</p>
+                            <h3 class="text-xl font-bold text-primary mb-3" style="opacity: 1 !important; transform: none !important;">${product.name}</h3>
+                            <p class="text-gray-medium mb-6" style="opacity: 1 !important; transform: none !important;">${product.description}</p>
                             <a href="#" class="inline-flex items-center text-primary font-semibold hover:text-accent transition-colors">
                                 查看详情
                                 <i class="fa fa-arrow-right ml-2 transform hover:translate-x-1 transition-transform"></i>
@@ -406,13 +536,8 @@
                         </div>
                     `;
                     
+                    // 立即添加到DOM，不等待图片加载
                     productGrid.appendChild(productCard);
-                });
-                
-                // 初始化产品卡片样式
-                const productCards = document.querySelectorAll('.product-card');
-                productCards.forEach(card => {
-                    card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
                 });
                 
                 // 重新初始化筛选功能
@@ -425,7 +550,6 @@
          */
         function initProductFiltering() {
             const filterButtons = document.querySelectorAll('.filter-btn');
-            const productCards = document.querySelectorAll('.product-card');
             
             // 移除之前的事件监听器（避免重复绑定）
             filterButtons.forEach(button => {
@@ -448,21 +572,20 @@
                     
                     const filter = this.getAttribute('data-filter');
                     
-                    // 筛选产品
+                    // 立即获取当前的产品卡片列表，而不是缓存
+                    const productCards = document.querySelectorAll('.product-card');
+                    
+                    // 筛选产品 - 避免使用setTimeout，直接更新显示状态
                     productCards.forEach(card => {
                         if (filter === 'all' || card.getAttribute('data-category') === filter) {
                             card.style.display = 'block';
-                            // 添加动画效果
-                            setTimeout(() => {
-                                card.style.opacity = '1';
-                                card.style.transform = 'scale(1)';
-                            }, 50);
+                            // 确保文本内容始终可见
+                            const title = card.querySelector('h3');
+                            const description = card.querySelector('p');
+                            if (title) title.style.opacity = '1';
+                            if (description) description.style.opacity = '1';
                         } else {
-                            card.style.opacity = '0';
-                            card.style.transform = 'scale(0.8)';
-                            setTimeout(() => {
-                                card.style.display = 'none';
-                            }, 300);
+                            card.style.display = 'none';
                         }
                     });
                 });
@@ -480,22 +603,27 @@
                     // 清空容器
                     container.innerHTML = '';
                     
-                    // 添加新闻卡片
+                    // 立即创建并显示新闻卡片，优先显示文本内容
                     news.forEach(newsItem => {
                         const categoryClass = newsItem.category === '公司新闻' ? 'bg-primary' : 'bg-gray-medium';
                         const newsCard = document.createElement('div');
-                        newsCard.className = 'bg-white rounded-xl shadow-custom overflow-hidden hover:shadow-xl transition-shadow duration-300';
+                        newsCard.className = 'news-card bg-white rounded-xl shadow-custom overflow-hidden hover:shadow-xl transition-shadow duration-300';
                         
-                        // 获取占位图URL
-                        const placeholderUrl = getPlaceholderImageUrl(newsItem.image, 60, 40);
+                        // 从图片URL提取ID
+                        const match = newsItem.image.match(/id\/(\d+)\//);
+                        const imageId = match ? match[1] : '1';
+                        const bgColor = getImageBackgroundColor(imageId);
                         
+                        // 先创建HTML结构，但确保文本内容优先显示
                         newsCard.innerHTML = `
                             <div class="relative overflow-hidden">
+                                <!-- 使用背景色占位 -->
+                                <div style="background-color: ${bgColor}; min-height: 192px;"></div>
                                 <img 
-                                    src="${placeholderUrl}" 
+                                    src="" 
                                     data-src="${newsItem.image}" 
                                     alt="${newsItem.title}" 
-                                    class="w-full h-48 object-cover transform hover:scale-105 transition-transform duration-500 opacity-90"
+                                    class="absolute inset-0 w-full h-full object-cover transform hover:scale-105 transition-transform duration-500 opacity-0"
                                     loading="lazy"
                                 >
                                 <div class="absolute top-4 left-4 ${categoryClass} text-white text-sm font-semibold px-3 py-1 rounded-full">
@@ -503,11 +631,11 @@
                                 </div>
                             </div>
                             <div class="p-6">
-                                <div class="text-sm text-gray-medium mb-3">
+                                <div class="text-sm text-gray-medium mb-3" style="opacity: 1 !important; transform: none !important;">
                                     <i class="fa fa-calendar mr-1"></i> ${newsItem.date}
                                 </div>
-                                <h3 class="text-xl font-bold text-primary mb-3 hover:text-accent transition-colors">${newsItem.title}</h3>
-                                <p class="text-gray-medium mb-6">${newsItem.summary}</p>
+                                <h3 class="text-xl font-bold text-primary mb-3 hover:text-accent transition-colors" style="opacity: 1 !important; transform: none !important;">${newsItem.title}</h3>
+                                <p class="text-gray-medium mb-6" style="opacity: 1 !important; transform: none !important;">${newsItem.summary}</p>
                                 <a href="#" class="inline-flex items-center text-primary font-semibold hover:text-accent transition-colors">
                                     阅读全文
                                     <i class="fa fa-arrow-right ml-2 transform hover:translate-x-1 transition-transform"></i>
@@ -515,6 +643,7 @@
                             </div>
                         `;
                         
+                        // 立即添加到DOM，不等待图片加载
                         container.appendChild(newsCard);
                     });
                 });
@@ -611,12 +740,13 @@
     <section id="home" class="relative min-h-screen flex items-center bg-gradient-industrial overflow-hidden">
         <div class="absolute inset-0 z-0">
                 <div class="absolute inset-0 bg-primary/40"></div>
-                <!-- 使用低质量占位图作为初始显示 -->
+                <!-- 使用渐变背景色占位，而不是低质量图片 -->
+                <div class="w-full h-full bg-gradient-to-br from-primary/20 to-accent/10"></div>
                 <img 
-                    src="https://picsum.photos/id/180/200/100?blur=4" 
+                    src="" 
                     data-src="https://picsum.photos/id/180/1920/1080" 
                     alt="导热硅脂应用场景" 
-                    class="w-full h-full object-cover opacity-40"
+                    class="absolute inset-0 w-full h-full object-cover opacity-0"
                     loading="lazy"
                 >
                 <!-- 装饰性几何图形 -->
@@ -843,9 +973,17 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <!-- 应用领域1 -->
                 <div class="flex flex-col md:flex-row gap-6 bg-gray-light rounded-xl overflow-hidden group hover:shadow-lg transition-all">
-                    <div class="md:w-2/5 overflow-hidden">
-                        <img src="https://picsum.photos/id/160/600/800" alt="电子设备应用" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                    </div>
+                    <div class="md:w-2/5 overflow-hidden relative">
+                            <!-- 使用背景色占位 -->
+                            <div style="background-color: #f3f4f6; width: 100%; padding-bottom: 133%;"></div>
+                            <img 
+                                src="" 
+                                data-src="https://picsum.photos/id/160/600/800" 
+                                alt="电子设备应用" 
+                                class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-0"
+                                loading="lazy"
+                            >
+                        </div>
                     <div class="md:w-3/5 p-6 flex flex-col justify-center">
                         <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4 text-primary text-xl">
                             <i class="fa fa-laptop"></i>
@@ -874,9 +1012,17 @@
                 
                 <!-- 应用领域2 -->
                 <div class="flex flex-col md:flex-row gap-6 bg-gray-light rounded-xl overflow-hidden group hover:shadow-lg transition-all">
-                    <div class="md:w-2/5 overflow-hidden">
-                        <img src="https://picsum.photos/id/1071/600/800" alt="汽车电子应用" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                    </div>
+                    <div class="md:w-2/5 overflow-hidden relative">
+                            <!-- 使用背景色占位 -->
+                            <div style="background-color: #e5e7eb; width: 100%; padding-bottom: 133%;"></div>
+                            <img 
+                                src="" 
+                                data-src="https://picsum.photos/id/1071/600/800" 
+                                alt="汽车电子应用" 
+                                class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-0"
+                                loading="lazy"
+                            >
+                        </div>
                     <div class="md:w-3/5 p-6 flex flex-col justify-center">
                         <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4 text-primary text-xl">
                             <i class="fa fa-car"></i>
@@ -905,9 +1051,17 @@
                 
                 <!-- 应用领域3 -->
                 <div class="flex flex-col md:flex-row gap-6 bg-gray-light rounded-xl overflow-hidden group hover:shadow-lg transition-all">
-                    <div class="md:w-2/5 overflow-hidden">
-                        <img src="https://picsum.photos/id/1025/600/800" alt="LED照明应用" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                    </div>
+                    <div class="md:w-2/5 overflow-hidden relative">
+                            <!-- 使用背景色占位 -->
+                            <div style="background-color: #d1d5db; width: 100%; padding-bottom: 133%;"></div>
+                            <img 
+                                src="" 
+                                data-src="https://picsum.photos/id/1025/600/800" 
+                                alt="LED照明应用" 
+                                class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-0"
+                                loading="lazy"
+                            >
+                        </div>
                     <div class="md:w-3/5 p-6 flex flex-col justify-center">
                         <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4 text-primary text-xl">
                             <i class="fa fa-lightbulb-o"></i>
@@ -936,9 +1090,17 @@
                 
                 <!-- 应用领域4 -->
                 <div class="flex flex-col md:flex-row gap-6 bg-gray-light rounded-xl overflow-hidden group hover:shadow-lg transition-all">
-                    <div class="md:w-2/5 overflow-hidden">
-                        <img src="https://picsum.photos/id/96/600/800" alt="工业机械应用" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                    </div>
+                    <div class="md:w-2/5 overflow-hidden relative">
+                            <!-- 使用背景色占位 -->
+                            <div style="background-color: #f9fafb; width: 100%; padding-bottom: 133%;"></div>
+                            <img 
+                                src="" 
+                                data-src="https://picsum.photos/id/96/600/800" 
+                                alt="工业机械应用" 
+                                class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-0"
+                                loading="lazy"
+                            >
+                        </div>
                     <div class="md:w-3/5 p-6 flex flex-col justify-center">
                         <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4 text-primary text-xl">
                             <i class="fa fa-cogs"></i>
@@ -991,10 +1153,50 @@
                         <p class="text-gray-medium company-description"></p>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
-                        <img src="https://picsum.photos/id/180/600/400" alt="公司工厂" class="rounded-lg shadow-sm hover:shadow-md transition-all transform hover:-translate-y-1">
-                        <img src="https://picsum.photos/id/116/600/400" alt="研发中心" class="rounded-lg shadow-sm hover:shadow-md transition-all transform hover:-translate-y-1 mt-8">
-                        <img src="https://picsum.photos/id/177/600/400" alt="生产车间" class="rounded-lg shadow-sm hover:shadow-md transition-all transform hover:-translate-y-1">
-                        <img src="https://picsum.photos/id/169/600/400" alt="质检中心" class="rounded-lg shadow-sm hover:shadow-md transition-all transform hover:-translate-y-1 mt-8">
+                        <!-- 使用背景色占位和延迟加载 -->
+                        <div class="relative rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all transform hover:-translate-y-1">
+                            <div style="background-color: #f3f4f6; width: 100%; padding-bottom: 67%;"></div>
+                            <img 
+                                src="" 
+                                data-src="https://picsum.photos/id/180/600/400" 
+                                alt="公司工厂" 
+                                class="absolute inset-0 w-full h-full object-cover opacity-0"
+                                loading="lazy"
+                            >
+                        </div>
+                        
+                        <div class="relative rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all transform hover:-translate-y-1 mt-8">
+                            <div style="background-color: #e5e7eb; width: 100%; padding-bottom: 67%;"></div>
+                            <img 
+                                src="" 
+                                data-src="https://picsum.photos/id/116/600/400" 
+                                alt="研发中心" 
+                                class="absolute inset-0 w-full h-full object-cover opacity-0"
+                                loading="lazy"
+                            >
+                        </div>
+                        
+                        <div class="relative rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all transform hover:-translate-y-1">
+                            <div style="background-color: #d1d5db; width: 100%; padding-bottom: 67%;"></div>
+                            <img 
+                                src="" 
+                                data-src="https://picsum.photos/id/177/600/400" 
+                                alt="生产车间" 
+                                class="absolute inset-0 w-full h-full object-cover opacity-0"
+                                loading="lazy"
+                            >
+                        </div>
+                        
+                        <div class="relative rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all transform hover:-translate-y-1 mt-8">
+                            <div style="background-color: #f9fafb; width: 100%; padding-bottom: 67%;"></div>
+                            <img 
+                                src="" 
+                                data-src="https://picsum.photos/id/169/600/400" 
+                                alt="质检中心" 
+                                class="absolute inset-0 w-full h-full object-cover opacity-0"
+                                loading="lazy"
+                            >
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1719,12 +1921,74 @@
             element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
         });
         
-        // 初始加载和滚动时触发动画
+        // 立即预创建产品中心和新闻组件的DOM结构，确保与页面同步加载
+        function preCreateComponents() {
+            const productGrid = document.getElementById('products-grid');
+            if (productGrid) {
+                // 创建骨架占位结构
+                const skeletonHtml = `
+                    <div class="product-card bg-white rounded-xl shadow-custom overflow-hidden">
+                        <div class="relative overflow-hidden">
+                            <div style="background-color: #f3f4f6; min-height: 256px;"></div>
+                            <div class="absolute top-4 left-4 bg-accent text-white text-sm font-semibold px-3 py-1 rounded-full">
+                                加载中...
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-primary mb-3 skeleton-loading"></h3>
+                            <p class="text-gray-medium mb-6 skeleton-loading"></p>
+                            <a href="#" class="inline-flex items-center text-primary font-semibold">
+                                查看详情
+                                <i class="fa fa-arrow-right ml-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                `;
+                
+                // 添加几个骨架占位
+                productGrid.innerHTML = skeletonHtml.repeat(3);
+            }
+            
+            // 为新闻组件添加骨架占位
+            const newsContainers = document.querySelectorAll('.news-container');
+            newsContainers.forEach(container => {
+                const newsSkeleton = `
+                    <div class="bg-white rounded-xl shadow-custom overflow-hidden">
+                        <div class="relative overflow-hidden">
+                            <div style="background-color: #e5e7eb; min-height: 192px;"></div>
+                            <div class="absolute top-4 left-4 bg-primary text-white text-sm font-semibold px-3 py-1 rounded-full">
+                                加载中...
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="text-sm text-gray-medium mb-3 skeleton-loading"></div>
+                            <h3 class="text-xl font-bold text-primary mb-3 skeleton-loading"></h3>
+                            <p class="text-gray-medium mb-6 skeleton-loading"></p>
+                        </div>
+                    </div>
+                `;
+                
+                container.innerHTML = newsSkeleton.repeat(2);
+            });
+        }
+        
+        // DOM加载完成后立即创建骨架结构
+        document.addEventListener('DOMContentLoaded', function() {
+            initPage();
+            // 立即创建组件骨架，确保与页面同步加载
+            preCreateComponents();
+        });
+        
+        // 页面加载完成后执行数据加载和动画
         window.addEventListener('load', async function() {
-            await loadDataFromFile();
+            // 分离数据加载和组件渲染，不阻塞页面显示
+            loadDataFromFile().then(() => {
+                // 数据加载完成后，初始化图片懒加载
+                setTimeout(initLazyLoading, 100);
+            });
+            
+            // 立即执行滚动动画，不等待数据加载完成
             animateOnScroll();
-            // 初始化图片懒加载
-            setTimeout(initLazyLoading, 300);
         });
         window.addEventListener('scroll', animateOnScroll);
     </script>
