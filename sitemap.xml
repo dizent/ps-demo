@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <!-- 主页 -->
+    <url>
+        <loc>https://www.pinsai.com/index.html</loc>
+        <lastmod>2025-01-01</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+    </url>
+    
+    <!-- 隐私政策页面 -->
+    <url>
+        <loc>https://www.pinsai.com/privacy-policy.html</loc>
+        <lastmod>2025-01-01</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <!-- 使用条款页面 -->
+    <url>
+        <loc>https://www.pinsai.com/terms-of-service.html</loc>
+        <lastmod>2025-01-01</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <!-- 网站地图页面 -->
+    <url>
+        <loc>https://www.pinsai.com/sitemap.html</loc>
+        <lastmod>2025-01-01</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <!-- 产品中心锚点 -->
+    <url>
+        <loc>https://www.pinsai.com/index.html#products</loc>
+        <lastmod>2025-01-01</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.9</priority>
+    </url>
+    
+    <!-- 技术优势锚点 -->
+    <url>
+        <loc>https://www.pinsai.com/index.html#technology</loc>
+        <lastmod>2025-01-01</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.9</priority>
+    </url>
+    
+    <!-- 应用领域锚点 -->
+    <url>
+        <loc>https://www.pinsai.com/index.html#applications</loc>
+        <lastmod>2025-01-01</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.9</priority>
+    </url>
+    
+    <!-- 关于我们锚点 -->
+    <url>
+        <loc>https://www.pinsai.com/index.html#company</loc>
+        <lastmod>2025-01-01</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.9</priority>
+    </url>
+    
+    <!-- 联系我们锚点 -->
+    <url>
+        <loc>https://www.pinsai.com/index.html#contact</loc>
+        <lastmod>2025-01-01</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.9</priority>
+    </url>
+</urlset>

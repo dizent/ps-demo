@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>网站地图 - PinSai导热硅脂</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0F3460',
+                        secondary: '#1A3A5F',
+                        accent: '#E94560',
+                        dark: '#16213E',
+                        light: '#F5F5F5',
+                        'gray-dark': '#333333',
+                        'gray-medium': '#666666',
+                        'gray-light': '#EEEEEE'
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .text-shadow-lg {
+                text-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            }
+            .transition-transform-opacity {
+                transition-property: transform, opacity;
+            }
+            .bg-gradient-industrial {
+                background: linear-gradient(135deg, #0F3460 0%, #16213E 100%);
+            }
+            .scrollbar-hide::-webkit-scrollbar {
+                display: none;
+            }
+            .scrollbar-hide {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+        }
+    </style>
+</head>
+
+<body class="font-inter text-gray-dark bg-light antialiased">
+    <!-- 导航栏 -->
+    <header id="navbar" class="fixed w-full z-50 transition-all duration-300 bg-transparent">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center space-x-2">
+                    <div class="w-10 h-10 bg-accent rounded-lg flex items-center justify-center">
+                        <i class="fa fa-fire text-white text-xl"></i>
+                    </div>
+                    <span class="text-2xl font-bold text-white text-shadow-lg">PinSai</span>
+                </a>
+                
+                <!-- 桌面导航 -->
+                <nav class="hidden md:flex space-x-8">
+                    <a href="index.html#home" class="text-white hover:text-accent transition-colors font-medium">首页</a>
+                    <a href="index.html#products" class="text-white hover:text-accent transition-colors font-medium">产品中心</a>
+                    <a href="index.html#technology" class="text-white hover:text-accent transition-colors font-medium">技术优势</a>
+                    <a href="index.html#applications" class="text-white hover:text-accent transition-colors font-medium">应用领域</a>
+                    <a href="index.html#company" class="text-white hover:text-accent transition-colors font-medium">关于我们</a>
+                    <a href="index.html#contact" class="text-white hover:text-accent transition-colors font-medium">联系我们</a>
+                </nav>
+                
+                <!-- 联系按钮 -->
+                <a href="index.html#contact" class="hidden md:inline-block bg-accent hover:bg-accent/90 text-white font-medium py-2 px-6 rounded-lg transition-all transform hover:scale-105">
+                    咨询产品
+                </a>
+                
+                <!-- 移动端菜单按钮 -->
+                <button id="menu-toggle" class="md:hidden text-white text-2xl">
+                    <i class="fa fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 移动端导航菜单 -->
+        <div id="mobile-menu" class="md:hidden hidden bg-dark/95 backdrop-blur-md">
+            <div class="container mx-auto px-4 py-4 space-y-4">
+                <a href="index.html#home" class="block text-white hover:text-accent transition-colors font-medium py-2">首页</a>
+                <a href="index.html#products" class="block text-white hover:text-accent transition-colors font-medium py-2">产品中心</a>
+                <a href="index.html#technology" class="block text-white hover:text-accent transition-colors font-medium py-2">技术优势</a>
+                <a href="index.html#applications" class="block text-white hover:text-accent transition-colors font-medium py-2">应用领域</a>
+                <a href="index.html#company" class="block text-white hover:text-accent transition-colors font-medium py-2">关于我们</a>
+                <a href="index.html#contact" class="block text-white hover:text-accent transition-colors font-medium py-2">联系我们</a>
+                <a href="index.html#contact" class="block bg-accent hover:bg-accent/90 text-white font-medium py-3 px-6 rounded-lg text-center transition-all">
+                    咨询产品
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 页面标题 -->
+    <section class="relative py-32 bg-gradient-industrial overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <div class="absolute inset-0 bg-primary/40"></div>
+            <img src="https://picsum.photos/id/30/1920/1080" alt="网站地图背景" class="w-full h-full object-cover opacity-20">
+        </div>
+        
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            <h1 class="text-[clamp(2rem,4vw,3rem)] font-bold text-white text-shadow-lg mb-4">
+                网站地图
+            </h1>
+            <p class="text-gray-100 text-lg max-w-2xl mx-auto">
+                以下是PinSai导热硅脂网站的结构概览，帮助您快速找到所需信息
+            </p>
+        </div>
+    </section>
+
+    <!-- 内容区域 -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
+            <div class="mb-12">
+                <h2 class="text-2xl font-bold text-primary mb-6">网站结构</h2>
+                <p class="text-gray-medium mb-8">
+                    PinSai导热硅脂网站包含以下主要部分，点击链接可直接跳转到相应页面或页面内的特定区域。
+                </p>
+                
+                <!-- 网站地图树形结构 -->
+                <div class="space-y-8">
+                    <!-- 首页部分 -->
+                    <div class="bg-gray-light p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-secondary mb-4">
+                            <a href="index.html" class="flex items-center hover:text-accent transition-colors">
+                                <i class="fa fa-home mr-3 text-primary"></i>
+                                首页
+                            </a>
+                        </h3>
+                    </div>
+                    
+                    <!-- 产品中心部分 -->
+                    <div class="bg-gray-light p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-secondary mb-4">
+                            <a href="index.html#products" class="flex items-center hover:text-accent transition-colors">
+                                <i class="fa fa-cubes mr-3 text-primary"></i>
+                                产品中心
+                            </a>
+                        </h3>
+                        <div class="pl-10 space-y-2">
+                            <p><a href="index.html#products" class="text-gray-medium hover:text-accent transition-colors">全系列产品展示</a></p>
+                            <p><a href="index.html#products" class="text-gray-medium hover:text-accent transition-colors">高导热型硅脂</a></p>
+                            <p><a href="index.html#products" class="text-gray-medium hover:text-accent transition-colors">耐高温型硅脂</a></p>
+                            <p><a href="index.html#products" class="text-gray-medium hover:text-accent transition-colors">绝缘型导热硅脂</a></p>
+                            <p><a href="index.html#products" class="text-gray-medium hover:text-accent transition-colors">电子专用硅脂</a></p>
+                            <p><a href="index.html#products" class="text-gray-medium hover:text-accent transition-colors">导电导热硅脂</a></p>
+                            <p><a href="index.html#products" class="text-gray-medium hover:text-accent transition-colors">定制化解决方案</a></p>
+                        </div>
+                    </div>
+                    
+                    <!-- 技术优势部分 -->
+                    <div class="bg-gray-light p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-secondary mb-4">
+                            <a href="index.html#technology" class="flex items-center hover:text-accent transition-colors">
+                                <i class="fa fa-flask mr-3 text-primary"></i>
+                                技术优势
+                            </a>
+                        </h3>
+                        <div class="pl-10 space-y-2">
+                            <p><a href="index.html#technology" class="text-gray-medium hover:text-accent transition-colors">核心技术介绍</a></p>
+                            <p><a href="index.html#technology" class="text-gray-medium hover:text-accent transition-colors">研发团队</a></p>
+                            <p><a href="index.html#technology" class="text-gray-medium hover:text-accent transition-colors">生产工艺</a></p>
+                            <p><a href="index.html#technology" class="text-gray-medium hover:text-accent transition-colors">品质控制</a></p>
+                            <p><a href="index.html#technology" class="text-gray-medium hover:text-accent transition-colors">性能测试</a></p>
+                        </div>
+                    </div>
+                    
+                    <!-- 应用领域部分 -->
+                    <div class="bg-gray-light p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-secondary mb-4">
+                            <a href="index.html#applications" class="flex items-center hover:text-accent transition-colors">
+                                <i class="fa fa-sitemap mr-3 text-primary"></i>
+                                应用领域
+                            </a>
+                        </h3>
+                        <div class="pl-10 space-y-2">
+                            <p><a href="index.html#applications" class="text-gray-medium hover:text-accent transition-colors">电子设备散热</a></p>
+                            <p><a href="index.html#applications" class="text-gray-medium hover:text-accent transition-colors">汽车电子</a></p>
+                            <p><a href="index.html#applications" class="text-gray-medium hover:text-accent transition-colors">LED照明</a></p>
+                            <p><a href="index.html#applications" class="text-gray-medium hover:text-accent transition-colors">电源设备</a></p>
+                            <p><a href="index.html#applications" class="text-gray-medium hover:text-accent transition-colors">工业控制</a></p>
+                            <p><a href="index.html#applications" class="text-gray-medium hover:text-accent transition-colors">新能源</a></p>
+                        </div>
+                    </div>
+                    
+                    <!-- 关于我们部分 -->
+                    <div class="bg-gray-light p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-secondary mb-4">
+                            <a href="index.html#company" class="flex items-center hover:text-accent transition-colors">
+                                <i class="fa fa-building-o mr-3 text-primary"></i>
+                                关于我们
+                            </a>
+                        </h3>
+                        <div class="pl-10 space-y-2">
+                            <p><a href="index.html#company" class="text-gray-medium hover:text-accent transition-colors">公司简介</a></p>
+                            <p><a href="index.html#company" class="text-gray-medium hover:text-accent transition-colors">发展历程</a></p>
+                            <p><a href="index.html#company" class="text-gray-medium hover:text-accent transition-colors">企业文化</a></p>
+                            <p><a href="index.html#company" class="text-gray-medium hover:text-accent transition-colors">资质认证</a></p>
+                            <p><a href="index.html#company" class="text-gray-medium hover:text-accent transition-colors">新闻动态</a></p>
+                        </div>
+                    </div>
+                    
+                    <!-- 联系我们部分 -->
+                    <div class="bg-gray-light p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-secondary mb-4">
+                            <a href="index.html#contact" class="flex items-center hover:text-accent transition-colors">
+                                <i class="fa fa-envelope-o mr-3 text-primary"></i>
+                                联系我们
+                            </a>
+                        </h3>
+                        <div class="pl-10 space-y-2">
+                            <p><a href="index.html#contact" class="text-gray-medium hover:text-accent transition-colors">联系方式</a></p>
+                            <p><a href="index.html#contact" class="text-gray-medium hover:text-accent transition-colors">在线咨询</a></p>
+                            <p><a href="index.html#contact" class="text-gray-medium hover:text-accent transition-colors">留言反馈</a></p>
+                            <p><a href="index.html#contact" class="text-gray-medium hover:text-accent transition-colors">工厂地址</a></p>
+                        </div>
+                    </div>
+                    
+                    <!-- 法律信息部分 -->
+                    <div class="bg-gray-light p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-secondary mb-4">
+                            <i class="fa fa-shield mr-3 text-primary"></i>
+                            法律信息
+                        </h3>
+                        <div class="pl-10 space-y-2">
+                            <p><a href="privacy-policy.html" class="text-gray-medium hover:text-accent transition-colors">隐私政策</a></p>
+                            <p><a href="terms-of-service.html" class="text-gray-medium hover:text-accent transition-colors">使用条款</a></p>
+                            <p><a href="sitemap.html" class="text-gray-medium hover:text-accent transition-colors">网站地图</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- XML网站地图 -->
+            <div class="bg-gray-light p-6 rounded-lg">
+                <h2 class="text-2xl font-bold text-primary mb-4">XML网站地图</h2>
+                <p class="text-gray-medium mb-4">
+                    我们提供XML格式的网站地图，方便搜索引擎爬虫更好地索引我们的网站内容。
+                </p>
+                <p class="text-gray-medium">
+                    <a href="sitemap.xml" target="_blank" class="text-accent hover:underline flex items-center">
+                        <i class="fa fa-file-code-o mr-2"></i>
+                        查看XML网站地图
+                    </a>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white pt-16 pb-8">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+                <!-- 公司简介 -->
+                <div>
+                    <div class="flex items-center space-x-2 mb-6">
+                        <div class="w-10 h-10 bg-accent rounded-lg flex items-center justify-center">
+                            <i class="fa fa-fire text-white text-xl"></i>
+                        </div>
+                        <span class="text-2xl font-bold">PinSai</span>
+                    </div>
+                    <p class="text-gray-400 mb-6">
+                        15年专注导热材料研发与生产，国家高新技术企业，
+                        为全球客户提供高品质的导热解决方案。
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-accent transition-colors">
+                            <i class="fa fa-weixin text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-accent transition-colors">
+                            <i class="fa fa-weibo text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-accent transition-colors">
+                            <i class="fa fa-linkedin text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-accent transition-colors">
+                            <i class="fa fa-youtube-play text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- 快速链接 -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-6">快速链接</h4>
+                    <ul class="space-y-3">
+                        <li><a href="index.html#home" class="text-gray-400 hover:text-accent transition-colors">首页</a></li>
+                        <li><a href="index.html#products" class="text-gray-400 hover:text-accent transition-colors">产品中心</a></li>
+                        <li><a href="index.html#technology" class="text-gray-400 hover:text-accent transition-colors">技术优势</a></li>
+                        <li><a href="index.html#applications" class="text-gray-400 hover:text-accent transition-colors">应用领域</a></li>
+                        <li><a href="index.html#company" class="text-gray-400 hover:text-accent transition-colors">关于我们</a></li>
+                        <li><a href="index.html#contact" class="text-gray-400 hover:text-accent transition-colors">联系我们</a></li>
+                    </ul>
+                </div>
+                
+                <!-- 产品系列 -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-6">产品系列</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-400 hover:text-accent transition-colors">高导热型硅脂</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-accent transition-colors">耐高温型硅脂</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-accent transition-colors">绝缘型导热硅脂</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-accent transition-colors">电子专用硅脂</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-accent transition-colors">导电导热硅脂</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-accent transition-colors">定制化解决方案</a></li>
+                    </ul>
+                </div>
+                
+                <!-- 联系信息 -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-6">联系信息</h4>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <i class="fa fa-map-marker text-accent mt-1 mr-3"></i>
+                            <span class="text-gray-400">广东省深圳市宝安区西乡街道科技园A栋10楼</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-phone text-accent mt-1 mr-3"></i>
+                            <span class="text-gray-400">0755-12345678<br>400-888-9999</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-envelope-o text-accent mt-1 mr-3"></i>
+                            <span class="text-gray-400">info@PinSai.com<br>sales@PinSai.com</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <hr class="border-gray-800 mb-8">
+            
+            <!-- 版权信息 -->
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="text-center md:text-left mb-4 md:mb-0">
+                    <p class="text-gray-500 text-sm mb-2">
+                        &copy; 2025 PinSai导热硅脂. 保留所有权利.
+                    </p>
+                    <p class="text-gray-500 text-sm">
+                        <a href="https://beian.miit.gov.cn/" target="_blank" class="hover:text-gray-400">粤ICP备2025469235号-1</a>
+                    </p>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="privacy-policy.html" class="text-gray-500 hover:text-gray-400 text-sm">隐私政策</a>
+                    <a href="terms-of-service.html" class="text-gray-500 hover:text-gray-400 text-sm">使用条款</a>
+                    <a href="sitemap.html" class="text-gray-500 hover:text-gray-400 text-sm">网站地图</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 返回顶部按钮 -->
+    <button id="back-to-top" class="fixed bottom-8 right-8 w-12 h-12 bg-accent text-white rounded-full flex items-center justify-center shadow-lg opacity-0 invisible transition-all z-50 hover:bg-accent/90">
+        <i class="fa fa-chevron-up"></i>
+    </button>
+
+    <script>
+        // 导航栏滚动效果
+        const navbar = document.getElementById('navbar');
+        const backToTop = document.getElementById('back-to-top');
+        
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 50) {
+                navbar.classList.add('bg-dark/95', 'backdrop-blur-md', 'shadow-lg');
+                navbar.classList.remove('bg-transparent');
+                
+                backToTop.classList.remove('opacity-0', 'invisible');
+                backToTop.classList.add('opacity-100', 'visible');
+            } else {
+                navbar.classList.remove('bg-dark/95', 'backdrop-blur-md', 'shadow-lg');
+                navbar.classList.add('bg-transparent');
+                
+                backToTop.classList.add('opacity-0', 'invisible');
+                backToTop.classList.remove('opacity-100', 'visible');
+            }
+        });
+        
+        // 移动端菜单切换
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        menuToggle.addEventListener('click', function() {
+            mobileMenu.classList.toggle('hidden');
+            const icon = menuToggle.querySelector('i');
+            if (mobileMenu.classList.contains('hidden')) {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            } else {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            }
+        });
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                // 关闭移动菜单（如果打开）
+                if (!mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.add('hidden');
+                    const icon = menuToggle.querySelector('i');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // 返回顶部按钮
+        backToTop.addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    </script>
+</body>
+</html>
